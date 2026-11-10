@@ -80,30 +80,19 @@
     </div>  
 </header>  
 
-<div class="container">  
-
-    <section id="login-panel" class="panel active">  
-        <div id="login-section">  
-            <h2>Secure Staff & Member Login</h2>  
-            <div class="form-group">  
-                <label>Enter ID (Admin ID / Membership ID / Delivery ID)</label>  
-                <input type="text" id="access-id" placeholder="e.g., Parasrajput4141, TCP45678, DELIV01">  
-            </div>  
-            <button class="btn" style="width: 100%;" onclick="verifyLogin()">Login to Panel</button>  
-            <p style="font-size: 11px; color: var(--text-muted); margin-top: 15px; text-align: center;">  
-                Public customers can directly order from the menu without login!  
-            </p>  
-        </div>  
-    </section>  
-
-    <section id="customer-panel" class="panel">  
+<div class="container">
+        <!-- 1. PUBLIC / MEMBER CUSTOMER MENU PANEL (Ab ye sabse pehle khulega) -->  
+    <section id="customer-panel" class="panel active">  
         <div style="display: flex; justify-content: space-between; align-items: center;">  
             <h2>Our Exquisite Menu</h2>  
             <span class="badge" id="user-status-badge">Public Guest</span>  
         </div>  
           
-        <div class="menu-grid" id="menu-container"></div>  
+        <div class="menu-grid" id="menu-container">  
+            <!-- Menu items dynamically loaded from Supabase -->  
+        </div>  
 
+        <!-- Cart & Bargain Section -->  
         <div class="cart-section">  
             <h3>Your Cart & Smart Bargain</h3>  
             <div id="cart-items-list" style="margin: 15px 0;">  
@@ -119,6 +108,7 @@
             </div>  
         </div>  
 
+        <!-- Live Order Tracker -->  
         <div class="cart-section" style="margin-top: 30px;" id="tracker-section">  
             <h3>Live Order Tracking</h3>  
             <div class="tracker-steps">  
@@ -131,6 +121,22 @@
         </div>  
     </section>  
 
+    <!-- 2. LOGIN / ROLE-BASED PANEL SECTION -->  
+    <section id="login-panel" class="panel">  
+        <div id="login-section">  
+            <h2>Secure Staff & Member Login</h2>  
+            <div class="form-group">  
+                <label>Enter ID (Admin ID / Membership ID / Delivery ID)</label>  
+                <input type="text" id="access-id" placeholder="e.g., Parasrajput4141, TCP45678, DELIV01">  
+            </div>  
+            <button class="btn" style="width: 100%;" onclick="verifyLogin()">Login to Panel</button>  
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 15px; text-align: center;">  
+                Staff & Members can login here for special benefits.  
+            </p>  
+        </div>  
+    </section>  
+
+    <!-- 3. MEMBERSHIP PANEL -->  
     <section id="membership-panel" class="panel">  
         <div class="membership-banner">  
             <h2>The Crafted Plate Privilege Membership</h2>  
@@ -151,6 +157,7 @@
         </div>  
     </section>  
 
+    <!-- 4. ADMIN & DELIVERY CONTROL PANEL -->  
     <section id="admin-delivery-panel" class="panel">  
         <h2>Management & Control Dashboard</h2>  
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">  
@@ -301,7 +308,16 @@
 
     function proceedToCheckout() {  
         if(cart.length === 0) { alert("Cart is empty!"); return; }  
-        alert("Order placed successfully! Scan PhonePe QR (8269083404-2@ybl) to pay. Live order tracker activated.");  
+        
+        let customerName = prompt("Please enter your Name for delivery:");
+        let customerPhone = prompt("Please enter your Phone Number:");
+        
+        if(!customerName || !customerPhone) {
+            alert("Name and Phone number are required to place the order!");
+            return;
+        }
+
+        alert(`Thank you ${customerName}! Order placed successfully. Please scan PhonePe QR (8269083404-2@ybl) to pay. Live order tracker activated.`);  
         updateOrderStatus(1);  
     }  
 

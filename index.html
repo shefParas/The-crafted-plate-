@@ -1,0 +1,372 @@
+﻿<!DOCTYPE html>  
+<html lang="hi">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>The Crafted Plate - Cloud Kitchen</title>  
+    
+    <!-- PWA / Mobile App Install Meta Tags -->
+    <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+
+
+    <!-- Supabase JS Client SDK CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <style>  
+        :root {  
+            --bg-color: #121212;  
+            --card-bg: #1e1e1e;  
+            --gold: #d4af37;  
+            --gold-hover: #f39c12;  
+            --text-main: #ffffff;  
+            --text-muted: #b0b0b0;  
+            --border-color: #333333;  
+            --accent-red: #e74c3c;  
+            --accent-green: #27ae60;  
+        }  
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }  
+        body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 50px; }  
+        header { background: #0a0a0a; border-bottom: 2px solid var(--gold); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }  
+        .logo h1 { color: var(--gold); font-size: 22px; font-weight: 700; letter-spacing: 1px; }  
+        .logo p { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }  
+      
+        .nav-buttons button, .btn { background: var(--gold); color: #000; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 14px; }  
+        .nav-buttons button:hover, .btn:hover { background: var(--gold-hover); }  
+
+
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }  
+      
+        /* Login Screen */  
+        #login-section { max-width: 400px; margin: 50px auto; background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid var(--gold); text-align: center; }  
+        #login-section h2 { color: var(--gold); margin-bottom: 20px; }  
+        .form-group { margin-bottom: 15px; text-align: left; }  
+        .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 5px; }  
+        .form-group input { width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid var(--border-color); color: #fff; border-radius: 5px; }  
+      
+        /* Panels */  
+        .panel { display: none; }  
+        .panel.active { display: block; }  
+
+
+        /* Menu Grid */  
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }  
+        .menu-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; }  
+        .menu-card h3 { color: var(--gold); font-size: 18px; margin-bottom: 5px; }  
+        .menu-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }  
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }  
+        .price { font-size: 18px; font-weight: bold; color: #fff; }  
+      
+        /* Cart & Bargain Box */  
+        .cart-section { background: var(--card-bg); border: 1px solid var(--gold); padding: 20px; border-radius: 10px; margin-top: 30px; }  
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 14px; }  
+      
+        /* Membership Banner */  
+        .membership-banner { background: linear-gradient(135deg, #2a2a2a, #111); border: 2px solid var(--gold); padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center; }  
+        .membership-banner h2 { color: var(--gold); margin-bottom: 10px; }  
+      
+        /* Live Tracker */  
+        .tracker-steps { display: flex; justify-content: space-between; margin: 20px 0; position: relative; }  
+        .step { text-align: center; font-size: 12px; color: var(--text-muted); flex: 1; position: relative; }  
+        .step.active { color: var(--gold); font-weight: bold; }  
+        .step span { display: block; width: 25px; height: 25px; background: #333; color: #fff; border-radius: 50%; margin: 0 auto 5px; line-height: 25px; font-size: 12px; }  
+        .step.active span { background: var(--gold); color: #000; }  
+
+
+        /* QR Code Box */  
+        .qr-box { background: #fff; color: #000; padding: 15px; border-radius: 8px; text-align: center; max-width: 250px; margin: 15px auto; }  
+        .badge { background: var(--gold); color: #000; padding: 3px 8px; font-size: 11px; border-radius: 4px; font-weight: bold; }  
+    </style>  
+</head>  
+<body>  
+<header>  
+    <div class="logo">  
+        <h1>THE CRAFTED PLATE</h1>  
+        <p>Luxury Cloud Kitchen</p>  
+    </div>  
+    <div class="nav-buttons" id="nav-controls">  
+        <button onclick="switchTab('customer')">Menu & Order</button>  
+        <button onclick="switchTab('membership')">Privilege Card</button>  
+        <button onclick="switchTab('login')">Secure Login</button>  
+    </div>  
+</header>  
+
+
+<div class="container">  
+
+
+    <!-- 1. LOGIN / ROLE-BASED PANEL SECTION -->  
+    <section id="login-panel" class="panel active">  
+        <div id="login-section">  
+            <h2>Secure Staff & Member Login</h2>  
+            <div class="form-group">  
+                <label>Enter ID (Admin ID / Membership ID / Delivery ID)</label>  
+                <input type="text" id="access-id" placeholder="e.g., ADMIN001, TCP45678, DELIV01">  
+            </div>  
+            <button class="btn" style="width: 100%;" onclick="verifyLogin()">Login to Panel</button>  
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 15px; text-align: center;">  
+                Public customers can directly order from the menu without login!  
+            </p>  
+        </div>  
+    </section>  
+
+
+    <!-- 2. PUBLIC / MEMBER CUSTOMER MENU PANEL -->  
+    <section id="customer-panel" class="panel">  
+        <div style="display: flex; justify-content: space-between; align-items: center;">  
+            <h2>Our Exquisite Menu</h2>  
+            <span class="badge" id="user-status-badge">Public Guest</span>  
+        </div>  
+          
+        <div class="menu-grid" id="menu-container">  
+            <!-- Menu items dynamically loaded from Supabase -->  
+        </div>  
+
+
+        <!-- Cart & Bargain Section -->  
+        <div class="cart-section">  
+            <h3>Your Cart & Smart Bargain</h3>  
+            <div id="cart-items-list" style="margin: 15px 0;">  
+                <p style="color: var(--text-muted);">Cart is empty.</p>  
+            </div>  
+            <div style="display: flex; gap: 10px; margin-top: 15px; align-items: center;">  
+                <input type="number" id="bargain-price-input" placeholder="Enter your offered price (₹)" style="padding: 8px; background: #2a2a2a; border: 1px solid var(--border-color); color: #fff; border-radius: 5px; flex: 1;">  
+                <button class="btn" onclick="applyBargain()">Submit Offer / Bargain</button>  
+            </div>  
+            <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">  
+                <h3 id="cart-total">Total: ₹0</h3>  
+                <button class="btn" style="background: var(--accent-green); color: #fff;" onclick="proceedToCheckout()">Proceed to Checkout</button>  
+            </div>  
+        </div>  
+
+
+        <!-- Live Order Tracker -->  
+        <div class="cart-section" style="margin-top: 30px;" id="tracker-section">  
+            <h3>Live Order Tracking</h3>  
+            <div class="tracker-steps">  
+                <div class="step active" id="step-1"><span>1</span>Order Placed</div>  
+                <div class="step" id="step-2"><span>2</span>Kitchen Cooking</div>  
+                <div class="step" id="step-3"><span>3</span>Out for Delivery</div>  
+                <div class="step" id="step-4"><span>4</span>Delivered</div>  
+            </div>  
+            <p id="delivery-boy-info" style="font-size: 13px; color: var(--gold); text-align: center; margin-top: 10px;"></p>  
+        </div>  
+    </section>  
+
+
+    <!-- 3. MEMBERSHIP PANEL -->  
+    <section id="membership-panel" class="panel">  
+        <div class="membership-banner">  
+            <h2>The Crafted Plate Privilege Membership</h2>  
+            <p>Unlock Unlimited Bargaining Power, All-Day 15% OFF, and Priority Delivery!</p>  
+            <h1 style="color: var(--gold); margin: 15px 0;">₹399 Only</h1>  
+            <p style="font-size: 13px; color: var(--text-muted);">Pay via PhonePe UPI: <b style="color:#fff;">8269083404-2@ybl</b></p>  
+              
+            <div class="qr-box">  
+                <p style="font-weight: bold; font-size: 12px; margin-bottom: 5px;">Scan & Pay via PhonePe</p>  
+                <div style="background: #000; color: var(--gold); padding: 10px; font-weight: bold; font-size: 14px; border: 1px dashed var(--gold);">[ PhonePe QR: Paras Karan ]</div>  
+                <p style="font-size: 10px; color: #555; margin-top: 5px;">UPI: 8269083404-2@ybl</p>  
+            </div>  
+
+
+            <div style="max-width: 350px; margin: 15px auto;">  
+                <input type="text" id="membership-utr" placeholder="Enter PhonePe UTR / Transaction ID" style="width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid var(--border-color); color: #fff; border-radius: 5px; margin-bottom: 10px;">  
+                <button class="btn" style="width: 100%;" onclick="activateMembership()">Instant Activate Membership</button>  
+            </div>  
+        </div>  
+    </section>  
+
+
+    <!-- 4. ADMIN & DELIVERY CONTROL PANEL -->  
+    <section id="admin-delivery-panel" class="panel">  
+        <h2>Management & Control Dashboard</h2>  
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">  
+            <div class="cart-section" style="margin-top: 0;">  
+                <h3 style="color: var(--gold); margin-bottom: 10px;">Kitchen Admin Controls</h3>  
+                <p style="font-size: 13px; color: var(--text-muted);">Manage incoming customer orders, bargain proposals, and task assignments.</p>  
+                <div id="admin-orders-list" style="margin-top: 15px; font-size: 13px;">  
+                    <p>No active orders right now.</p>  
+                </div>  
+            </div>  
+            <div class="cart-section" style="margin-top: 0;">  
+                <h3 style="color: var(--gold); margin-bottom: 10px;">Assigned Delivery Partner Panel</h3>  
+                <p style="font-size: 13px; color: var(--text-muted);">Assigned Delivery Partner: <b>Rahul (Single Partner Fleet)</b></p>  
+                <div style="margin-top: 15px;">  
+                    <button class="btn" onclick="updateOrderStatus(3)" style="margin-bottom: 10px; width: 100%;">Mark Out for Delivery</button>  
+                    <button class="btn" onclick="updateOrderStatus(4)" style="background: var(--accent-green); color: #fff; width: 100%;">Mark Delivered & Completed</button>  
+                </div>  
+            </div>  
+        </div>  
+    </section>  
+
+
+</div>  
+
+
+<script>  
+    // --- SUPABASE CONNECTION SETUP ---
+    const supabaseUrl = 'https://vxwxxfwjyqnqxxjkdkqy.supabase.co';
+    const supabaseKey = 'sb_publishable_ew8f1ryiSvHH0pM5FNXkFw_OP-2PMfK';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+
+    let cart = [];  
+    let isMember = false;  
+    let currentRole = 'public';  
+
+
+    // Supabase डेटाबेस से मेनू लोड करने का फंक्शन
+    async function initMenu() {  
+        const container = document.getElementById('menu-container');  
+        container.innerHTML = '<p style="color: var(--text-muted);">Loading menu from database...</p>';  
+
+
+        const { data: menuItems, error } = await supabase.from('menu_items').select('*');
+
+
+        if (error) {  
+            console.error('Error fetching menu:', error);
+            container.innerHTML = '<p style="color: red;">Failed to load menu from database.</p>';  
+            return;  
+        }  
+
+
+        container.innerHTML = '';  
+        if (!menuItems || menuItems.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-muted);">No menu items found. Please add items in Supabase Table Editor.</p>';
+            return;
+        }
+
+
+        menuItems.forEach(item => {  
+            container.innerHTML += `  
+                <div class="menu-card">  
+                    <div>  
+                        <span class="badge">${item.category || 'Special'}</span>  
+                        <h3 style="margin-top: 8px;">${item.name}</h3>  
+                        <p>${item.description || ''}</p>
+                    </div>  
+                    <div class="price-row">  
+                        <span class="price">₹${item.price}</span>  
+                        <button class="btn" onclick="addToCart('${item.id}', '${item.name}', ${item.price})">Add to Cart</button>  
+                    </div>  
+                </div>  
+            `;  
+        });  
+    }  
+
+
+    function addToCart(id, name, price) {  
+        cart.push({ id, name, price });  
+        updateCartUI();  
+    }  
+
+
+    function updateCartUI() {  
+        const list = document.getElementById('cart-items-list');  
+        if (cart.length === 0) {  
+            list.innerHTML = '<p style="color: var(--text-muted);">Cart is empty.</p>';  
+            document.getElementById('cart-total').innerText = 'Total: ₹0';  
+            return;  
+        }  
+        list.innerHTML = '';  
+        let total = 0;  
+        cart.forEach((item) => {  
+            total += item.price;  
+            list.innerHTML += `<div class="cart-item"><span>${item.name}</span> <b>₹${item.price}</b></div>`;  
+        });  
+        document.getElementById('cart-total').innerText = `Total: ₹${total}`;  
+    }  
+
+
+    function applyBargain() {  
+        const offered = parseInt(document.getElementById('bargain-price-input').value);  
+        if (isNaN(offered)) {  
+            alert("Please enter a valid price offer!");  
+            return;  
+        }  
+        let total = cart.reduce((sum, item) => sum + item.price, 0);  
+        let minAllowed = isMember ? total * 0.75 : total * 0.90;  
+
+
+        if (!isMember && offered < minAllowed) {  
+            alert("This bargain price is too low for public guests! Unlock Unlimited Bargaining Power & 15% OFF by getting the ₹399 Privilege Membership.");  
+            switchTab('membership');  
+            return;  
+        }  
+        alert(`Your bargain offer of ₹${offered} has been submitted to the kitchen for approval!`);  
+    }  
+
+
+    function verifyLogin() {  
+        const id = document.getElementById('access-id').value.trim();  
+        if (id.startsWith("ADMIN")) {  
+            currentRole = 'admin';  
+            alert("Logged in as Admin successfully!");  
+            switchTab('admin-delivery');  
+        } else if (id.startsWith("TCP")) {  
+            currentRole = 'member';  
+            isMember = true;  
+            document.getElementById('user-status-badge').innerText = 'Privilege Member';  
+            alert("Membership Verified! Welcome back.");  
+            switchTab('customer');  
+        } else if (id.startsWith("DELIV")) {  
+            currentRole = 'delivery';  
+            alert("Logged in as Delivery Partner!");  
+            switchTab('admin-delivery');  
+        } else {  
+            alert("Invalid ID! Please use valid Admin, Membership, or Delivery ID.");  
+        }  
+    }  
+
+
+    function activateMembership() {  
+        const utr = document.getElementById('membership-utr').value;  
+        if(!utr) { alert("Please enter UTR number."); return; }  
+        isMember = true;  
+        document.getElementById('user-status-badge').innerText = 'Privilege Member';  
+        alert("Payment verified! Your Membership ID is TCP" + Math.floor(100000 + Math.random() * 900000) + ". Activated instantly!");  
+        switchTab('customer');  
+    }  
+
+
+    function switchTab(tabName) {  
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));  
+        if(tabName === 'customer') document.getElementById('customer-panel').classList.add('active');  
+        if(tabName === 'membership') document.getElementById('membership-panel').classList.add('active');  
+        if(tabName === 'login') document.getElementById('login-panel').classList.add('active');  
+        if(tabName === 'admin-delivery') document.getElementById('admin-delivery-panel').classList.add('active');  
+    }  
+
+
+    function proceedToCheckout() {  
+        if(cart.length === 0) { alert("Cart is empty!"); return; }  
+        alert("Order placed successfully! Scan PhonePe QR (8269083404-2@ybl) to pay. Live order tracker activated.");  
+        updateOrderStatus(1);  
+    }  
+
+
+    function updateOrderStatus(step) {  
+        for(let i=1; i<=4; i++) {  
+            document.getElementById(`step-${i}`).classList.remove('active');  
+        }  
+        for(let i=1; i<=step; i++) {  
+            document.getElementById(`step-${i}`).classList.add('active');  
+        }  
+        if(step === 3) {  
+            document.getElementById('delivery-boy-info').innerText = "Out for Delivery with Rahul (Partner). Contact: 98765XXXXX";  
+        } else if(step === 4) {  
+            document.getElementById('delivery-boy-info').innerText = "Order successfully delivered! Enjoy your meal.";  
+        }  
+    }  
+
+
+    window.onload = initMenu;  
+</script>
+
+
+</body>  
+</html>

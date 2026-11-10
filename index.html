@@ -109,8 +109,7 @@
             </div>
             <div style="font-size: 12px; color: var(--gold-light);">Kitchen Helpline / WhatsApp: <b id="header-helpline">8269083404</b></div>
         </div>
-
-        <!-- 1. CUSTOMER PANEL -->
+                <!-- 1. CUSTOMER PANEL -->
         <section id="customer-panel" class="panel-view active">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
@@ -171,8 +170,7 @@
                     <button class="btn btn-green" style="width:100%; padding:14px; font-size:16px; margin-top:18px;" onclick="placeCustomerOrder()">✅ Confirm Order (Auto-Saves to Google Sheet & WhatsApp)</button>
                 </div>
             </div>
-
-            <div class="box-card" id="live-tracker-box">
+                        <div class="box-card" id="live-tracker-box">
                 <div class="box-title">
                     <span>🛵 Live Order Tracking</span>
                     <div style="display:flex; gap:8px; align-items:center;">
@@ -266,17 +264,19 @@
             </div>
         </section>
 
-        <!-- 3. LOGIN PANEL -->
+        <!-- 3. SECURE LOGIN PANEL (UPDATED WITH PASSWORD & NO HINTS VISIBLE TO PUBLIC) -->
         <section id="login-panel" class="panel-view">
             <div class="box-card" style="max-width:440px; margin:30px auto; text-align:center;">
-                <h2 style="color:var(--gold); margin-bottom:8px;">🔐 Secure ID Login</h2>
-                <p style="font-size:12px; color:var(--text-muted); margin-bottom:18px;">• Members: TCP...<br>• Delivery: DELIV01<br>• Admin: ADMIN001</p>
-                <input type="text" id="role-login-input" class="input-field" placeholder="Enter Access ID" style="margin-bottom:14px; text-align:center; font-weight:bold;">
-                <button class="btn" style="width:100%; padding:12px;" onclick="processRoleLogin()">Unlock Panel</button>
+                <h2 style="color:var(--gold); margin-bottom:8px;">🔐 Secure Staff & Admin Login</h2>
+                <p style="font-size:12px; color:var(--text-muted); margin-bottom:18px;">
+                    Apni Authorized ID aur Password darj karein.
+                </p>
+                <input type="text" id="role-login-input" class="input-field" placeholder="Enter Access ID (e.g. ADMIN001)" style="margin-bottom:10px; text-align:center; font-weight:bold;">
+                <input type="password" id="role-password-input" class="input-field" placeholder="Enter Password" style="margin-bottom:14px; text-align:center;">
+                <button class="btn" style="width:100%; padding:12px;" onclick="processRoleLogin()">Secure Login</button>
             </div>
         </section>
-
-        <!-- 4. DELIVERY PANEL -->
+                <!-- 4. DELIVERY PANEL -->
         <section id="delivery-panel" class="panel-view">
             <div class="box-card">
                 <div class="box-title">
@@ -298,7 +298,8 @@
                 <div id="delivery-orders-container"></div>
             </div>
         </section>
-                <!-- 5. ADMIN & REVENUE PANEL -->
+
+        <!-- 5. ADMIN & REVENUE PANEL -->
         <section id="admin-panel" class="panel-view">
             <div class="box-card">
                 <div class="box-title">
@@ -353,9 +354,9 @@
                         <label style="font-size:12px; color:var(--text-muted);">Owner WhatsApp:</label>
                         <input type="tel" id="adm-whatsapp-num" class="input-field" value="8269083404" style="margin-bottom:10px;">
                         <div style="font-size:12px; color:var(--text-muted); line-height:1.7; background:#141414; padding:10px; border-radius:6px;">
-                            <div>• Admin ID: <code style="color:var(--gold)">ADMIN001</code></div>
-                            <div>• Delivery ID: <code style="color:var(--gold)">DELIV01</code></div>
-                            <div>• UPI: <code style="color:var(--green)">8269083404-2@ybl</code>[span_0](start_span)[span_0](end_span)</div>
+                            <div>• Admin ID: <code style="color:var(--gold)">ADMIN001</code> (Pass: Paras@123)</div>
+                            <div>• Delivery ID: <code style="color:var(--gold)">DELIV01</code> (Pass: Delivery@123)</div>
+                            <div>• UPI: <code style="color:var(--green)">8269083404-2@ybl</code></div>
                         </div>
                         <button class="btn btn-sm" style="margin-top:10px; width:100%;" onclick="saveAdminWhatsApp()">💾 Save</button>
                     </div>
@@ -465,7 +466,8 @@
             const blob = new Blob([csv], { type: 'text/csv' });
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Revenue_Report.csv`; a.click();
         }
-                    function updateRoleNavigation() {
+
+        function updateRoleNavigation() {
             const badge = document.getElementById('active-role-badge');
             const memNote = document.getElementById('member-discount-note');
             const btnMenu = document.getElementById('nav-menu-btn'), btnMem = document.getElementById('nav-member-btn'), btnAdm = document.getElementById('nav-admin-btn'), btnDel = document.getElementById('nav-delivery-btn'), btnLog = document.getElementById('nav-login-btn'), btnOut = document.getElementById('nav-logout-btn');
@@ -488,21 +490,51 @@
             document.getElementById(panelId).classList.add('active');
         }
 
+        /* SECURE LOGIN FUNCTION WITH PASSWORD VALIDATION & NO PUBLIC HINTS */
         function processRoleLogin() {
             const rawId = document.getElementById('role-login-input').value.trim().toUpperCase();
-            if (!rawId) return;
-            if (rawId === "ADMIN001" || rawId === "ADMIN") { currentRole = 'admin'; updateRoleNavigation(); openPanel('admin-panel'); }
-            else if (rawId === "DELIV01" || rawId === "DELIVERY") { currentRole = 'delivery'; updateRoleNavigation(); openPanel('delivery-panel'); }
+            const password = document.getElementById('role-password-input').value.trim();
+
+            if (!rawId || !password) { 
+                alert("Kripya ID aur Password dono darj karein!"); 
+                return; 
+            }
+
+            if (rawId === "ADMIN001" && password === "Paras@123") {
+                currentRole = 'admin';
+                alert("Welcome Owner Admin! Full Access Unlocked.");
+                updateRoleNavigation(); 
+                openPanel('admin-panel');
+            } 
+            else if (rawId === "DELIV01" && password === "Delivery@123") {
+                currentRole = 'delivery';
+                alert("Welcome Delivery Partner!");
+                updateRoleNavigation(); 
+                openPanel('delivery-panel');
+            } 
             else if (rawId.startsWith("TCP")) {
-                let found = membersList.find(m => String(m.id).toUpperCase() === rawId) || { id: rawId, name: "VIP Member", valid: "11/2027" };
-                currentRole = 'member'; activeMemberData = found; populateDigitalCard(found); updateRoleNavigation(); openPanel('customer-panel');
-            } else { alert("Invalid ID!"); }
+                let found = membersList.find(m => String(m.id).toUpperCase() === rawId);
+                if (found) {
+                    currentRole = 'member'; 
+                    activeMemberData = found; 
+                    populateDigitalCard(found); 
+                    alert(`Welcome back, ${found.name}!`);
+                    updateRoleNavigation(); 
+                    openPanel('customer-panel');
+                } else {
+                    alert("Invalid Membership ID!");
+                }
+            } 
+            else {
+                alert("Galat ID ya Password! Access Denied.");
+            }
+
             document.getElementById('role-login-input').value = '';
+            document.getElementById('role-password-input').value = '';
         }
 
         function logoutRole() { currentRole = 'public'; activeMemberData = null; customBargainPrice = null; updateRoleNavigation(); openPanel('customer-panel'); }
-
-        function renderCategories() {
+                    function renderCategories() {
             const cats = ["All", ...new Set(menuItems.map(i => i.cat))];
             const tabContainer = document.getElementById('category-tabs');
             tabContainer.innerHTML = '';
@@ -593,7 +625,7 @@
             document.getElementById('checkout-qr-container').style.display = mode.includes('Online') ? 'block' : 'none';
         }
 
-        function copyUPI() { navigator.clipboard.writeText("8269083404-2@ybl"); alert("UPI copied!");[span_0](start_span)[span_0](end_span)}
+        function copyUPI() { navigator.clipboard.writeText("8269083404-2@ybl"); alert("UPI copied!"); }
 
         function placeCustomerOrder() {
             const name = document.getElementById('cust-name').value.trim();
@@ -620,7 +652,7 @@
             const waMsg = `*NEW ORDER:* ${newOrder.id}%0A*Name:* ${name}%0A*Items:* ${newOrder.itemsText}%0A*Total:* ₹${newOrder.finalPrice}`;
             clearCart(); document.getElementById('live-tracker-box').scrollIntoView({ behavior: 'smooth' });
             window.open(`https://wa.me/91${ownerWhatsApp}?text=${waMsg}`, '_blank');
-                }
+            }
                     function renderLiveTracker() {
             const noMsg = document.getElementById('no-active-order-msg'), content = document.getElementById('active-order-tracker-content');
             if (ordersList.length === 0) { noMsg.style.display = 'block'; content.style.display = 'none'; return; }
@@ -727,5 +759,3 @@
     </script>
 </body>
 </html>
-
-            

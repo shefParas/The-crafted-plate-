@@ -1718,5 +1718,114 @@
     });
   })();
 </script>
+<!-- PART 21: PRIVILEGE MEMBERSHIP CARD & PHONEPe QR BOX -->
+<script>
+  (function() {
+    window.addEventListener('DOMContentLoaded', () => {
+      const container = document.querySelector('.container');
+      if (!container) return;
+
+      // Create the Privilege Membership & QR Panel HTML
+      const membershipSection = document.createElement('section');
+      membershipSection.id = 'membership-panel';
+      membershipSection.style.cssText = 'background:var(--bg-card); border:1px solid var(--border-gold); border-radius:12px; padding:25px; margin-top:30px; text-align:center;';
+      
+      membershipSection.innerHTML = `
+        <div class="membership-banner">
+          <h2 style="color:var(--gold-primary); font-family:'Cinzel',serif; margin-bottom:10px;">The Crafted Plate Privilege Membership</h2>
+          <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:15px;">Unlock Unlimited Bargaining Power, All-Day 15% OFF, and Priority Delivery!</p>
+          <h1 style="color:var(--gold-light); font-family:'Cinzel',serif; margin: 15px 0;">₹399 Only</h1>
+          <p style="font-size:0.85rem; color:var(--text-muted);">Pay via PhonePe UPI: <b style="color:#fff;">8269083404-2@ybl</b></p>
+
+          <div class="qr-box" style="max-width:320px; margin:20px auto; background:#0a0a0a; border:1px dashed var(--gold-primary); padding:15px; border-radius:8px;">
+            <p style="font-weight:600; font-size:0.85rem; margin-bottom:8px; color:var(--gold-primary);">Scan & Pay via PhonePe</p>
+            <div style="background: #000; color: var(--gold-primary); padding: 12px; font-weight: bold; font-size: 0.95rem; border: 1px solid var(--border-gold); border-radius:6px; letter-spacing:1px;">[ PhonePe QR: Paras Karan ]</div>
+            <p style="font-size:0.75rem; color: #888; margin-top: 8px;">UPI ID: 8269083404-2@ybl</p>
+          </div>
+
+          <div style="max-width: 350px; margin: 0 auto;">
+            <input type="text" id="membership-utr" placeholder="Enter PhonePe UTR / Transaction ID" style="width: 100%; padding: 10px; background: var(--bg-elevated); border: 1px solid var(--border-gold); color: #fff; border-radius: 6px; margin-bottom: 10px; font-size:0.85rem;">
+            <button type="button" class="btn-gold" style="width: 100%; padding:10px; font-size:0.9rem;" onclick="window.activateCustomMembership()">Instant Activate Membership</button>
+          </div>
+        </div>
+      `;
+
+      container.appendChild(membershipSection);
+    });
+
+    window.activateCustomMembership = function() {
+      const utr = document.getElementById('membership-utr').value.trim();
+      if (!utr) {
+        alert('कृपया अपना PhonePe UTR या Transaction ID ज़रूर दर्ज करें!');
+        return;
+      }
+      alert('🎉 बधाई हो! आपकी Privilege Membership रिक्वेस्ट दर्ज हो गई है। एडमिन द्वारा UTR सत्यापित होते ही आपका अकाउंट एक्टिव कर दिया जाएगा।');
+      document.getElementById('membership-utr').value = '';
+    };
+  })();
+</script>
+<!-- PART 22: AUTO-LOAD COMPLETE ORIGINAL MENU & DISHES -->
+<script>
+  (function() {
+    // Complete original menu items dataset
+    const originalFullMenu = [
+      {
+        id: 'dish_orig_1',
+        name: 'Pressure Cooker Veg Biryani + Street Garlic Tomato Chutney',
+        desc: 'खुशबूदार देसी बासमती वेज बिरयानी, तीखी स्ट्रीट-स्टाइल लहसुन-टमाटर की स्पेशल चटनी के साथ।',
+        price: 220,
+        img: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'dish_orig_2',
+        name: 'Creamy Italian White Sauce Pasta',
+        desc: 'रिच चीज़ी व्हाइट बेक्ड सॉस, स्वीट कॉर्न, शिमला मिर्च और इटैलियन हर्ब्स से भरपूर।',
+        price: 190,
+        img: 'https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'dish_orig_3',
+        name: 'Crispy Tawa Mayo Grilled Sandwich',
+        desc: 'मक्खन में क्रिस्पी सेका हुआ तवा मेयो सैंडविच, ताज़ा सब्जियों और सीक्रेट मसालों के साथ।',
+        price: 130,
+        img: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'dish_orig_4',
+        name: 'Charcoal Roasted Gourmet Burger',
+        desc: 'स्मोकी रोस्टेड पैटी, डबल मेल्टेड चीज़ और कैरेमलाइज्ड अनियन वाला रॉयल बर्गर।',
+        price: 160,
+        img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'dish_orig_5',
+        name: 'Royal Paneer Tikka Platter & Mint Dip',
+        desc: 'तंदूरी मसालों में मैरीनेट किया हुआ सॉफ्ट पनीर टिक्का और पुदीना चटनी।',
+        price: 260,
+        img: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'dish_orig_6',
+        name: 'Dark Chocolate Hazelnut Lava Cake',
+        desc: 'गर्म चॉकलेट लावा केक, प्रीमियम कोको और रोस्टेड हेज़लनट टॉपिंग के साथ।',
+        price: 140,
+        img: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=700&q=80'
+      }
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Forcefully update defaultMenuData with the complete menu and refresh storage
+      if (typeof defaultMenuData !== 'undefined') {
+        defaultMenuData.length = 0;
+        originalFullMenu.forEach(item => defaultMenuData.push(item));
+        localStorage.setItem('tcp_custom_menu_data', JSON.stringify(defaultMenuData));
+
+        if (typeof renderMainMenu === 'function') renderMainMenu(defaultMenuData);
+        if (typeof renderSmartRecommendations === 'function') renderSmartRecommendations();
+        if (typeof window.tcpRenderAdminMenu === 'function') window.tcpRenderAdminMenu();
+      }
+    });
+  })();
+        </script>
 </body>
 </html>

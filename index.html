@@ -1969,5 +1969,338 @@
     });
   })();
 </script>
+<!-- THE CRAFTED PLATE: DIRECT IN-APP ORDER & ADMIN PANEL SYSTEM -->
+<script>
+  (function() {
+    // LocalStorage keys for orders
+    const STORAGE_KEY = 'tcp_store_orders';
+
+    // Ensure style & layout elements exist for the Admin & Order view
+    window.addEventListener('DOMContentLoaded', () => {
+      // Inject CSS for sleek notifications and admin dashboard styling if not present
+      if (!document.getElementById('tcp-system-styles')) {
+        const style = document.createElement('style');
+        style.id = 'tcp-system-styles';
+        style.innerHTML = `
+          .tcp-order-success-popup {
+            position: fixed; top: 20px; right: 20px; z-index: 99999;
+            background: linear-gradient(135deg, #1f1b12, #0d0d0d);
+            border: 2px solid var(--gold-primary, #d4af37); color: #fff;
+            padding: 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            animation: slideInRight 0.4s ease; max-width: 320px; font-family: inherit;
+          }
+          @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        `;
+        document.head.appendChild(style);
+      }
+
+      // Intercept existing checkout / order buttons or forms
+      interceptOrderActions();
+    });
+
+    function interceptOrderActions() {
+      // Look for any checkout button or WhatsApp order button in the existing template
+      document.addEventListener('click', function(e) {
+        const target = e.target;
+        // Check if user clicked a button intended for placing order or checkout
+        if (target && (target.id === 'placeOrderBtn' || target.classList.contains('checkout-btn') || target.innerText.toLowerCase().includes('order') || target.innerText.toLowerCase().includes('whatsapp'))) {
+          
+          // Check if cart has items (assuming a global cart array or localStorage cart exists)
+          let cartItems = [];
+          try {
+            cartItems = JSON.parse(localStorage.getItem('cart')) || JSON.parse(localStorage.getItem('tcp_cart')) || [];
+          } catch(err) { cartItems = []; }
+
+          if (cartItems.length === 0) {
+            // If cart is empty, let normal flow or alert happen, but don't block if they just want to browse
+            return;
+          }
+
+          // Prevent default WhatsApp redirection
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Prompt or grab customer details cleanly
+          processDirectOrder(cartItems);
+        }
+      }, true);
+    }
+
+    function processDirectOrder(cartItems) {
+      const customerName = prompt("कृपया अपना नाम दर्ज करें (Enter Customer Name):", "Paras Karan");
+      if (!customerName) return;
+
+      const customerPhone = prompt("कृपया अपना मोबाइल नंबर दर्ज करें (Enter Mobile Number):", "");
+      if (!customerPhone) return;
+
+      const customerAddress = prompt("कृपया डिलीवरी का पूरा पता दर्ज करें (Enter Delivery Address):", "Sector 148, Noida");
+      if (!customerAddress) return;
+
+      // Calculate total
+      let totalAmount = cartItems.reduce((sum, item) => sum + (item.price * (item.qty || 1)), 0);
+      if (totalAmount === 0) totalAmount = 199; // Fallback default if prices weren't indexed in array
+
+      // Create Order Object
+      const newOrder = {
+        id: 'TCP-' + Math.floor(1000 + Math.random() * 9000),
+        name: customerName,
+        phone: customerPhone,
+        address: customerAddress,
+        items: cartItems,
+        total: totalAmount,
+        status: 'Pending',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      // Save to localStorage for Admin Dashboard
+      let orders = [];
+      try {
+        orders = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch(e) { orders = []; }
+
+      orders.unshift(newOrder); // Add to top
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+
+      // Play Audio Notification Bell
+      playNotificationSound();
+
+      // Show Success Notification on Screen
+      showOrderSuccessPopup(newOrder.id);
+
+      // Clear cart
+      localStorage.removeItem('cart');
+      localStorage.removeItem('tcp_cart');
+
+      // Refresh page or update UI after 2 seconds
+      setTimeout(() => {
+        window.location.reload();
+      }, 2500);
+    }
+
+    function playNotificationSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 note
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15); // A5 note
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.6);
+      } catch(e) {
+        console.log("Audio not supported or blocked by browser policy");
+      }
+    }
+
+    function showOrderSuccessPopup(orderId) {
+      const popup = document.createElement('div');
+      popup.className = 'tcp-order-success-popup';
+      popup.innerHTML = `
+        <h4 style="color: var(--gold-primary, #d4af37); margin: 0 0 8px 0; font-family: 'Cinzel', serif;">👑 Order Placed Successfully!</h4>
+        <p style="font-size: 0.85rem; margin: 0 0 6px 0; color: #ccc;">Order ID: <b>${orderId}</b></p>
+        <p style="font-size: 0.78rem; margin: 0; color: #2ecc71;">✔ Sent directly to Admin Dashboard!</p>
+      `;
+      document.body.appendChild(popup);
+      setTimeout(() => { popup.remove(); }, 3000);
+    }
+  })();
+</script>
+<!-- THE CRAFTED PLATE: STRICT LOGIN/VERIFICATION + LIVE CUSTOMER TRACKING & ADMIN SYNC -->
+<script>
+  (function() {
+    const ORDER_KEY = 'tcp_store_orders';
+    const USER_KEY = 'tcp_logged_in_customer';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      injectSystemStyles();
+      checkCustomerAuthAndProtectCheckout();
+    });
+
+    function injectSystemStyles() {
+      if (document.getElementById('tcp-strict-styles')) return;
+      const style = document.createElement('style');
+      style.id = 'tcp-strict-styles';
+      style.innerHTML = `
+        .tcp-modal-overlay {
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          background: rgba(0,0,0,0.85); z-index: 99999; display: flex;
+          align-items: center; justify-content: center; font-family: inherit;
+        }
+        .tcp-modal-box {
+          background: linear-gradient(135deg, #1f1b12, #0d0d0d);
+          border: 2px solid var(--gold-primary, #d4af37); padding: 25px;
+          border-radius: 16px; width: 90%; max-width: 400px; color: #fff;
+          box-shadow: 0 15px 35px rgba(0,0,0,0.9); text-align: center;
+        }
+        .tcp-modal-box input {
+          width: 100%; padding: 10px; margin: 10px 0; background: #1a1a1a;
+          border: 1px solid var(--gold-primary, #d4af37); color: #fff; border-radius: 8px; font-size: 0.9rem;
+        }
+        .tcp-modal-box button {
+          width: 100%; padding: 10px; background: var(--gold-primary, #d4af37);
+          color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    function checkCustomerAuthAndProtectCheckout() {
+      let user = null;
+      try {
+        user = JSON.parse(localStorage.getItem(USER_KEY));
+      } catch(e) { user = null; }
+
+      // If user is not logged in, force popup login modal before they can order
+      if (!user) {
+        showLoginModal();
+      } else {
+        // User is logged in, show welcome / tracker status on screen
+        showCustomerTrackerWidget(user);
+      }
+
+      // Intercept checkout clicks
+      document.addEventListener('click', function(e) {
+        const target = e.target;
+        if (target && (target.id === 'placeOrderBtn' || target.classList.contains('checkout-btn') || target.innerText.toLowerCase().includes('order'))) {
+          let currentUser = null;
+          try { currentUser = JSON.parse(localStorage.getItem(USER_KEY)); } catch(err) {}
+
+          if (!currentUser) {
+            e.preventDefault();
+            e.stopPropagation();
+            alert('⚠️ कृपया ऑर्डर करने से पहले अपने मोबाइल नंबर से लॉगिन करें!');
+            showLoginModal();
+            return;
+          }
+
+          // If logged in, process the order securely
+          e.preventDefault();
+          e.stopPropagation();
+          processSecureOrder(currentUser);
+        }
+      }, true);
+    }
+
+    function showLoginModal() {
+      if (document.getElementById('tcpLoginModal')) return;
+      const overlay = document.createElement('div');
+      overlay.id = 'tcpLoginModal';
+      overlay.className = 'tcp-modal-overlay';
+      overlay.innerHTML = `
+        <div class="tcp-modal-box">
+          <h3 style="color: var(--gold-primary, #d4af37); font-family: 'Cinzel', serif; margin-bottom: 5px;">👑 THE CRAFTED PLATE</h3>
+          <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 15px;">ऑर्डर करने के लिए कृपया अपना विवरण दर्ज करें</p>
+          <input type="text" id="loginName" placeholder="पूरा नाम (Full Name)">
+          <input type="tel" id="loginPhone" placeholder="मोबाइल नंबर (10-digit Mobile Number)">
+          <input type="text" id="loginAddress" placeholder="डिलिवरी पता (Delivery Address / Sector)">
+          <button type="button" onclick="window.saveTcpUser()">लॉगिन करें & आगे बढ़ें</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    }
+
+    window.saveTcpUser = function() {
+      const name = document.getElementById('loginName').value.trim();
+      const phone = document.getElementById('loginPhone').value.trim();
+      const address = document.getElementById('loginAddress').value.trim();
+
+      if (!name || phone.length < 10 || !address) {
+        alert('कृपया सही नाम, 10 अंकों का फोन नंबर और पूरा पता भरें!');
+        return;
+      }
+
+      const userData = { name, phone, address };
+      localStorage.setItem(USER_KEY, JSON.stringify(userData));
+
+      const modal = document.getElementById('tcpLoginModal');
+      if (modal) modal.remove();
+
+      alert('✅ लॉगिन सफल! अब आप अपना मनपसंद गॉरमेट खाना आर्डर कर सकते हैं।');
+      window.location.reload();
+    };
+
+    function processSecureOrder(user) {
+      let cartItems = [];
+      try {
+        cartItems = JSON.parse(localStorage.getItem('cart')) || JSON.parse(localStorage.getItem('tcp_cart')) || [];
+      } catch(err) { cartItems = []; }
+
+      if (cartItems.length === 0) {
+        alert('आपका कार्ट खाली है!');
+        return;
+      }
+
+      let totalAmount = cartItems.reduce((sum, item) => sum + (item.price * (item.qty || 1)), 0);
+
+      const newOrder = {
+        id: 'TCP-' + Math.floor(1000 + Math.random() * 9000),
+        name: user.name,
+        phone: user.phone,
+        address: user.address,
+        items: cartItems,
+        total: totalAmount,
+        status: 'Pending (Kitchen Received)',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      // Save to Admin Orders list
+      let orders = [];
+      try { orders = JSON.parse(localStorage.getItem(ORDER_KEY)) || []; } catch(e) { orders = []; }
+      orders.unshift(newOrder);
+      localStorage.setItem(ORDER_KEY, JSON.stringify(orders));
+
+      // Save active order for customer tracking on their own screen
+      localStorage.setItem('tcp_active_order', JSON.stringify(newOrder));
+
+      // Play Sound & Clear Cart
+      playNotificationSound();
+      localStorage.removeItem('cart');
+      localStorage.removeItem('tcp_cart');
+
+      alert(`🎉 ऑर्डर सफलतापूर्वक प्लेस हो गया!\nऑर्डर ID: ${newOrder.id}\nयह सीधे आपके एडमिन पैनल और लाइव ट्रैकर पर सिंक हो गया है।`);
+      window.location.reload();
+    }
+
+    function showCustomerTrackerWidget(user) {
+      let activeOrder = null;
+      try { activeOrder = JSON.parse(localStorage.getItem('tcp_active_order')); } catch(e) {}
+
+      const trackerDiv = document.createElement('div');
+      trackerDiv.style.cssText = 'background: rgba(212,175,55,0.08); border: 1px solid var(--gold-primary, #d4af37); border-radius: 12px; padding: 12px 18px; margin: 15px auto; max-width: 600px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #fff;';
+      
+      trackerDiv.innerHTML = `
+        <div>
+          <span>👤 स्वागत है, <b>${user.name}</b></span> | <span style="color:#2ecc71; font-weight:bold;">● Verified</span>
+          ${activeOrder ? `<div style="margin-top:4px; font-size:0.78rem; color:#f3e5ab;">📦 एक्टिव ऑर्डर ID: <b>${activeOrder.id}</b> | स्टेटस: <span style="color:#e67e22;">${activeOrder.status}</span></div>` : '<div style="margin-top:2px; font-size:0.75rem; color:#aaa;">कोई सक्रिय ऑर्डर नहीं है।</div>'}
+        </div>
+        <button onclick="localStorage.removeItem('${USER_KEY}'); localStorage.removeItem('tcp_active_order'); window.location.reload();" style="background:transparent; border:1px solid #e74c3c; color:#e74c3c; padding:4px 10px; border-radius:6px; font-size:0.75rem; cursor:pointer;">लॉग आउट</button>
+      `;
+
+      const container = document.querySelector('.container') || document.body;
+      container.insertBefore(trackerDiv, container.firstChild);
+    }
+
+    function playNotificationSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.6);
+      } catch(e) {}
+    }
+  })();
+          </script>
 </body>
 </html>

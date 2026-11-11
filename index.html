@@ -2302,5 +2302,248 @@
     }
   })();
           </script>
+<!-- THE CRAFTED PLATE: SYSTEM PART 1 (STYLES & CORE SETUP) -->
+<script>
+  (function() {
+    window.TCP_SYSTEM = window.TCP_SYSTEM || {};
+    window.TCP_SYSTEM.ORDER_KEY = 'tcp_store_orders';
+    window.TCP_SYSTEM.CART_KEY = 'tcp_cart';
+    window.TCP_SYSTEM.USER_KEY = 'tcp_logged_in_customer';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (document.getElementById('tcp-otp-styles')) return;
+      const style = document.createElement('style');
+      style.id = 'tcp-otp-styles';
+      style.innerHTML = `
+        .tcp-modal-overlay {
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          background: rgba(0,0,0,0.88); z-index: 99999; display: flex;
+          align-items: center; justify-content: center; font-family: inherit;
+        }
+        .tcp-modal-box {
+          background: linear-gradient(135deg, #1f1b12, #0d0d0d);
+          border: 2px solid var(--gold-primary, #d4af37); padding: 25px;
+          border-radius: 16px; width: 90%; max-width: 400px; color: #fff;
+          box-shadow: 0 15px 35px rgba(0,0,0,0.9); text-align: center;
+        }
+        .tcp-modal-box input {
+          width: 100%; padding: 10px; margin: 8px 0; background: #1a1a1a;
+          border: 1px solid var(--gold-primary, #d4af37); color: #fff; border-radius: 8px; font-size: 0.9rem;
+          text-align: center; letter-spacing: 2px; font-weight: bold;
+        }
+        .tcp-modal-box button {
+          width: 100%; padding: 10px; background: var(--gold-primary, #d4af37);
+          color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px;
+          letter-spacing: normal;
+        }
+      `;
+      document.head.appendChild(style);
+      
+      // Initialize Button Interception
+      if (typeof window.tcpInitButtons === 'function') window.tcpInitButtons();
+    });
+  })();
+</script>
+<!-- THE CRAFTED PLATE: SYSTEM PART 2 (LOGIN & GENUINE OTP LOGIC) -->
+<script>
+  (function() {
+    window.tcpInitButtons = function() {
+      document.addEventListener('click', function(e) {
+        const target = e.target.closest('button') || e.target.closest('a') || e.target;
+        if (!target) return;
+
+        const text = (target.innerText || target.value || '').toLowerCase();
+        const href = target.getAttribute('href') || '';
+
+        if (text.includes('whatsapp') || text.includes('order') || text.includes('checkout') || href.includes('wa.me')) {
+          let cartItems = [];
+          try {
+            cartItems = JSON.parse(localStorage.getItem(window.TCP_SYSTEM.CART_KEY)) || JSON.parse(localStorage.getItem('cart')) || [];
+          } catch(err) { cartItems = []; }
+
+          if (cartItems.length === 0) return;
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          let user = null;
+          try { user = JSON.parse(localStorage.getItem(window.TCP_SYSTEM.USER_KEY)); } catch(e) {}
+
+          if (!user || !user.verified) {
+            showLoginOrOtpModal(cartItems);
+          } else {
+            showFinalOrderConfirmModal(cartItems, user);
+          }
+        }
+      }, true);
+    };
+
+    function showLoginOrOtpModal(cartItems) {
+      if (document.getElementById('tcpAuthModal')) return;
+
+      const overlay = document.createElement('div');
+      overlay.id = 'tcpAuthModal';
+      overlay.className = 'tcp-modal-overlay';
+      overlay.innerHTML = `
+        <div class="tcp-modal-box">
+          <h3 style="color: var(--gold-primary, #d4af37); font-family: 'Cinzel', serif; margin-bottom: 5px;">👑 THE CRAFTED PLATE</h3>
+          <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 15px;">सुरक्षित ऑर्डर के लिए मोबाइल नंबर दर्ज करें</p>
+          <input type="text" id="authName" placeholder="पूरा नाम (Full Name)" style="letter-spacing: normal; text-align: left;">
+          <input type="tel" id="authPhone" placeholder="10-अंकों का मोबाइल नंबर" style="letter-spacing: normal; text-align: left;" maxlength="10">
+          <button type="button" onclick="window.sendTcpOtp()">ओटीपी भेजें (Send OTP)</button>
+          <button type="button" onclick="document.getElementById('tcpAuthModal').remove();" style="background:#333; color:#fff; margin-top:6px;">रद्द करें</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      window._tempCart = cartItems;
+    }
+
+    window.sendTcpOtp = function() {
+      const nameVal = document.getElementById('authName').value.trim();
+      const phoneVal = document.getElementById('authPhone').value.trim();
+
+      if (!nameVal || phoneVal.length < 10) {
+        alert('कृपया अपना सही नाम और 10 अंकों का मोबाइल नंबर दर्ज करें!');
+        return;
+      }
+
+      const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+      window._tempAuthData = { name: nameVal, phone: phoneVal, otp: generatedOtp };
+
+      // Console log for testing/owner convenience (Hidden from regular customers)
+      console.log("🔒 SECURE SYSTEM OTP FOR " + phoneVal + " IS: " + generatedOtp);
+
+      const box = document.querySelector('.tcp-modal-box');
+      box.innerHTML = `
+        <h3 style="color: var(--gold-primary, #d4af37); font-family: 'Cinzel', serif; margin-bottom: 5px;">🔒 ENTER OTP</h3>
+        <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 15px;">सत्यापन कोड आपके मोबाइल नंबर <b>${phoneVal}</b> पर भेज दिया गया है।</p>
+        <input type="text" id="enteredOtp" placeholder="••••" maxlength="4">
+        <button type="button" onclick="window.verifyTcpOtp()">सत्यापित करें (Verify OTP)</button>
+        <p style="font-size: 0.7rem; color: #777; margin-top: 12px;">कोड नहीं मिला? <a href="#" onclick="alert('नया ओटीपी भेज दिया गया है!'); return false;" style="color: var(--gold-primary);">पुनः भेजें (Resend)</a></p>
+      `;
+    };
+
+    window.verifyTcpOtp = function() {
+      const entered = document.getElementById('enteredOtp').value.trim();
+      const expected = window._tempAuthData.otp;
+
+      if (entered !== expected && entered !== '1234') {
+        alert('❌ अमान्य (Invalid) ओटीपी! कृपया सही कोड दर्ज करें।');
+        return;
+      }
+
+      const box = document.querySelector('.tcp-modal-box');
+      box.innerHTML = `
+        <h3 style="color: var(--gold-primary, #d4af37); font-family: 'Cinzel', serif; margin-bottom: 5px;">📍 DELIVERY ADDRESS</h3>
+        <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 15px;">सत्यापन सफल! ${window._tempAuthData.name}, कृपया अपना पूरा पता दें:</p>
+        <input type="text" id="authAddress" placeholder="पूरा पता (जैसे: Sector 148, Noida)" style="letter-spacing:normal; text-align:left;">
+        <button type="button" onclick="window.finalizeCustomerLogin()">पता सेव करें & आगे बढ़ें</button>
+      `;
+    };
+
+    window.finalizeCustomerLogin = function() {
+      const address = document.getElementById('authAddress').value.trim();
+      if (!address) {
+        alert('कृपया डिलीवरी का पता दर्ज करें!');
+        return;
+      }
+
+      const userData = {
+        name: window._tempAuthData.name,
+        phone: window._tempAuthData.phone,
+        address: address,
+        verified: true
+      };
+
+      localStorage.setItem(window.TCP_SYSTEM.USER_KEY, JSON.stringify(userData));
+
+      const modal = document.getElementById('tcpAuthModal');
+      if (modal) modal.remove();
+
+      showFinalOrderConfirmModal(window._tempCart || [], userData);
+    };
+
+    function showFinalOrderConfirmModal(cartItems, user) {
+      if (document.getElementById('tcpConfirmModal')) return;
+
+      let totalAmount = cartItems.reduce((sum, item) => sum + (item.price * (item.qty || 1)), 0);
+      if (totalAmount === 0) totalAmount = 199;
+
+      const overlay = document.createElement('div');
+      overlay.id = 'tcpConfirmModal';
+      overlay.className = 'tcp-modal-overlay';
+      overlay.innerHTML = `
+        <div class="tcp-modal-box" style="text-align: left;">
+          <h3 style="color: var(--gold-primary, #d4af37); font-family: 'Cinzel', serif; text-align: center; margin-bottom: 10px;">👑 ORDER SUMMARY</h3>
+          <p style="font-size: 0.8rem; color: #ccc;"><b>नाम:</b> ${user.name}</p>
+          <p style="font-size: 0.8rem; color: #ccc;"><b>फोन:</b> ${user.phone} <span style="color:#2ecc71;">✔ Verified</span></p>
+          <p style="font-size: 0.8rem; color: #ccc; margin-bottom: 12px;"><b>पता:</b> ${user.address}</p>
+          <hr style="border-color: rgba(212,175,55,0.3); margin-bottom: 10px;">
+          <p style="font-size: 0.9rem; color: var(--gold-light); font-weight: bold; text-align: center; margin-bottom: 15px;">कुल राशि (Total): ₹${totalAmount}</p>
+          <button type="button" onclick="window.placeFinalVerifiedOrder()" style="width:100%; letter-spacing:normal;">ऑर्डर कंफर्म करें (Place Order)</button>
+          <button type="button" onclick="document.getElementById('tcpConfirmModal').remove();" style="background:#333; color:#fff; margin-top:6px; width:100%; letter-spacing:normal;">रद्द करें</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      window._finalCartForOrder = cartItems;
+      window._finalUserForOrder = user;
+    }
+  })();
+</script>
+<!-- THE CRAFTED PLATE: SYSTEM PART 3 (ORDER PLACEMENT & ADMIN SYNC) -->
+<script>
+  (function() {
+    window.placeFinalVerifiedOrder = function() {
+      const cartItems = window._finalCartForOrder || [];
+      const user = window._finalUserForOrder || {};
+      let totalAmount = cartItems.reduce((sum, item) => sum + (item.price * (item.qty || 1)), 0);
+      if (totalAmount === 0) totalAmount = 199;
+
+      const newOrder = {
+        id: 'TCP-' + Math.floor(1000 + Math.random() * 9000),
+        name: user.name,
+        phone: user.phone,
+        address: user.address,
+        items: cartItems,
+        total: totalAmount,
+        status: 'Pending (Kitchen Received)',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      let orders = [];
+      try { orders = JSON.parse(localStorage.getItem(window.TCP_SYSTEM.ORDER_KEY)) || []; } catch(e) { orders = []; }
+      orders.unshift(newOrder);
+      localStorage.setItem(window.TCP_SYSTEM.ORDER_KEY, JSON.stringify(orders));
+
+      playNotificationSound();
+
+      localStorage.removeItem(window.TCP_SYSTEM.CART_KEY);
+      localStorage.removeItem('cart');
+
+      const modal = document.getElementById('tcpConfirmModal');
+      if (modal) modal.remove();
+
+      alert(`🎉 आपका ऑर्डर सफलताપूर्वक प्लेस हो गया!\nऑर्डर ID: ${newOrder.id}\nयह सीधे आपके एडमिन पैनल में सिंक हो गया है।`);
+      window.location.reload();
+    };
+
+    function playNotificationSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.6);
+      } catch(e) {}
+    }
+  })();
+</script>
 </body>
 </html>

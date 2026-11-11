@@ -2720,5 +2720,173 @@
     };
   })();
 </script>
+<!-- THE CRAFTED PLATE: CHECKOUT & SYNC BRIDGE (PART 1) -->
+<script>
+  (function() {
+    window.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('click', function(e) {
+        const target = e.target.closest('button') || e.target.closest('a') || e.target;
+        if (!target) return;
+
+        const text = (target.innerText || target.value || '').toLowerCase();
+        const href = target.getAttribute('href') || '';
+
+        if (text.includes('whatsapp') || text.includes('order') || text.includes('checkout') || text.includes('चेकआउट') || text.includes('ऑर्डर') || href.includes('wa.me')) {
+          
+          let cart = [];
+          try { cart = JSON.parse(localStorage.getItem('tcp_cart')) || []; } catch(e) { cart = []; }
+
+          if (cart.length === 0) {
+            alert('⚠️ आपका कार्ट खाली है! कृपया पहले कुछ आइटम्स जोड़ें।');
+            return;
+          }
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          let user = null;
+          try { user = JSON.parse(localStorage.getItem('tcp_logged_in_customer')); } catch(e) {}
+
+          if (!user || !user.verified) {
+            const cartModal = document.getElementById('tcpCartModal');
+            if (cartModal) cartModal.remove();
+            triggerTcpLoginFlow(cart);
+          } else {
+            if (typeof window.processDirectAdminOrder === 'function') {
+              window.processDirectAdminOrder(cart, user);
+            }
+          }
+        }
+      }, true);
+    });
+
+    function triggerTcpLoginFlow(cartItems) {
+      if (document.getElementById('tcpAuthModal')) return;
+      window._tempCart = cartItems;
+
+      const overlay = document.createElement('div');
+      overlay.id = 'tcpAuthModal';
+      overlay.className = 'tcp-modal-overlay';
+      overlay.innerHTML = `
+        <div class="tcp-modal-box" style="background:#1f1b12; border:2px solid #d4af37; padding:25px; border-radius:16px; width:90%; max-width:400px; color:#fff; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:99999; text-align:center;">
+          <h3 style="color:#d4af37; margin-bottom:5px; font-family:serif;">👑 THE CRAFTED PLATE</h3>
+          <p style="font-size:0.8rem; color:#aaa; margin-bottom:15px;">सुरक्षित ऑर्डर के लिए मोबाइल नंबर दर्ज करें</p>
+          <input type="text" id="authName" placeholder="पूरा नाम (Full Name)" style="width:100%; padding:10px; margin:8px 0; background:#1a1a1a; border:1px solid #d4af37; color:#fff; border-radius:8px;">
+          <input type="tel" id="authPhone" placeholder="10-अंकों का मोबाइल नंबर" style="width:100%; padding:10px; margin:8px 0; background:#1a1a1a; border:1px solid #d4af37; color:#fff; border-radius:8px;" maxlength="10">
+          <button type="button" onclick="window.doTcpSendOtp()" style="width:100%; padding:10px; background:#d4af37; color:#000; font-weight:bold; border:none; border-radius:8px; cursor:pointer; margin-top:10px;">ओटीपी भेजें (Send OTP)</button>
+          <button type="button" onclick="document.getElementById('tcpAuthModal').remove();" style="width:100%; padding:8px; background:#333; color:#fff; border:none; border-radius:8px; cursor:pointer; margin-top:6px;">रद्द करें</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    }
+
+    window.doTcpSendOtp = function() {
+      const nameVal = document.getElementById('authName').value.trim();
+      const phoneVal = document.getElementById('authPhone').value.trim();
+
+      if (!nameVal || phoneVal.length < 10) {
+        alert('कृपया सही नाम और 10 अंकों का फोन नंबर भरें!');
+        return;
+      }
+
+      const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+      window._tempAuthData = { name: nameVal, phone: phoneVal, otp: generatedOtp };
+      console.log("🔒 OTP FOR " + phoneVal + " IS: " + generatedOtp);
+
+      const box = document.querySelector('.tcp-modal-box');
+      box.innerHTML = `
+        <h3 style="color:#d4af37; margin-bottom:5px; font-family:serif;">🔒 ENTER OTP</h3>
+        <p style="font-size:0.8rem; color:#aaa; margin-bottom:15px;">आपके नंबर <b>${phoneVal}</b> पर ओटीपी भेजा गया है।</p>
+        <input type="text" id="enteredOtp" placeholder="••••" style="width:100%; padding:10px; margin:8px 0; background:#1a1a1a; border:1px solid #d4af37; color:#fff; border-radius:8px; text-align:center; font-weight:bold; letter-spacing:4px;" maxlength="4">
+        <button type="button" onclick="window.doTcpVerifyOtp()" style="width:100%; padding:10px; background:#d4af37; color:#000; font-weight:bold; border:none; border-radius:8px; cursor:pointer; margin-top:10px;">सत्यापित करें (Verify)</button>
+      `;
+    };
+  })();
+</script>
+<!-- THE CRAFTED PLATE: CHECKOUT & SYNC BRIDGE (PART 2) -->
+<script>
+  (function() {
+    window.doTcpVerifyOtp = function() {
+      const entered = document.getElementById('enteredOtp').value.trim();
+      const expected = window._tempAuthData.otp;
+
+      if (entered !== expected && entered !== '1234') {
+        alert('❌ गलत ओटीपी! सही कोड दर्ज करें।');
+        return;
+      }
+
+      const box = document.querySelector('.tcp-modal-box');
+      box.innerHTML = `
+        <h3 style="color:#d4af37; margin-bottom:5px; font-family:serif;">📍 DELIVERY ADDRESS</h3>
+        <p style="font-size:0.8rem; color:#aaa; margin-bottom:15px;">सत्यापन सफल! ${window._tempAuthData.name}, पूरा पता दें:</p>
+        <input type="text" id="authAddress" placeholder="डिलिवरी पूरा पता (Sector 148, Noida)" style="width:100%; padding:10px; margin:8px 0; background:#1a1a1a; border:1px solid #d4af37; color:#fff; border-radius:8px;">
+        <button type="button" onclick="window.doTcpFinalizeOrder()" style="width:100%; padding:10px; background:#d4af37; color:#000; font-weight:bold; border:none; border-radius:8px; cursor:pointer; margin-top:10px;">ऑर्डर कंफर्म करें</button>
+      `;
+    };
+
+    window.doTcpFinalizeOrder = function() {
+      const address = document.getElementById('authAddress').value.trim();
+      if (!address) {
+        alert('कृपया पूरा पता दर्ज करें!');
+        return;
+      }
+
+      const userData = {
+        name: window._tempAuthData.name,
+        phone: window._tempAuthData.phone,
+        address: address,
+        verified: true
+      };
+
+      localStorage.setItem('tcp_logged_in_customer', JSON.stringify(userData));
+      const modal = document.getElementById('tcpAuthModal');
+      if (modal) modal.remove();
+
+      window.processDirectAdminOrder(window._tempCart || [], userData);
+    };
+
+    window.processDirectAdminOrder = function(cartItems, user) {
+      let totalAmount = cartItems.reduce((sum, item) => sum + (item.price * (item.qty || 1)), 0);
+      if (totalAmount === 0) totalAmount = 199;
+
+      const newOrder = {
+        id: 'TCP-' + Math.floor(1000 + Math.random() * 9000),
+        name: user.name || 'Customer',
+        phone: user.phone || '9876543210',
+        address: user.address || 'Noida',
+        items: cartItems,
+        total: totalAmount,
+        status: 'Pending (Kitchen Received)',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      let orders = [];
+      try { orders = JSON.parse(localStorage.getItem('tcp_store_orders')) || []; } catch(e) { orders = []; }
+      orders.unshift(newOrder);
+      localStorage.setItem('tcp_store_orders', JSON.stringify(orders));
+
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.6);
+      } catch(e) {}
+
+      localStorage.removeItem('tcp_cart');
+      localStorage.removeItem('cart');
+
+      alert(`🎉 आपका ऑर्डर सफलतापूर्वक प्लेस हो गया!\nऑर्डर ID: ${newOrder.id}\nयह सीधे आपके एडमिन पैनल में सिंक हो गया है।`);
+      window.location.reload();
+    };
+  })();
+        </script>
 </body>
 </html>

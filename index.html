@@ -1827,5 +1827,147 @@
     });
   })();
         </script>
+<!-- THE CRAFTED PLATE: FINAL COMPLETE MENU WITH AMUL BUTTER ADD-ON, MEMBERSHIP & QR -->
+<script>
+  (function() {
+    // Final Gourmet Menu including the new Amul Butter Add-on category & ₹7 Tawa Roti
+    const finalGourmetMenuWithButter = [
+      {
+        id: 'cat_1',
+        name: '1. Urban Street & Mumbai Classics',
+        desc: 'Signature Butter Pav Bhaji (₹129), Mumbai Tapri Vada Pav (₹79)',
+        price: 129,
+        img: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'cat_2',
+        name: '2. Continental Cravings & Sandwiches',
+        desc: 'Truffle Touch White Sauce Pasta (₹199), Classic Arrabbiata Red Sauce Pasta (₹179), Desi-Tuscan Fusion Pasta (₹189), Café Masala Maggi (₹79), Classic Loaded Aloo Masala Sandwich (₹99), Desi Egg Bhurji Sandwich (₹129)',
+        price: 199,
+        img: 'https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'cat_3',
+        name: '3. Crunchy & Crispy Fritters (Pakoda & Fries Station)',
+        desc: 'Homestyle French Fries / Finger Chips (₹89), Spiraled Spring Potato / Tornado Fries (₹119), Artisanal Mixed Veg Fritters (₹99), Laccha Onion Rings (₹89), Potato Slices Bhaji (₹79), Stuffed Spice Pepper Fritters (₹109)',
+        price: 89,
+        img: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'cat_4',
+        name: '4. Homestyle Comfort (Daily Veg & Sabzi)',
+        desc: 'Rustic Aloo Gobi (Q:₹89, H:₹129, F:₹219), Shahi Paneer (Q:₹129, H:₹219, F:₹399), Creamy Matar Paneer (Q:₹119, H:₹199, F:₹349), Assorted Seasonal Veg (Q:₹99, H:₹159, F:₹269), Dhaba Dal Tadka (Q:₹69, H:₹119, F:₹219), Slow-cooked Dal Makhani (Q:₹99, H:₹169, F:₹299)',
+        price: 129,
+        img: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'cat_5',
+        name: '5. Royal Non-Veg Delights',
+        desc: 'Homestyle Tender Chicken Curry (Q:₹149, H:₹269, F:₹449), Signature Butter Chicken (Q:₹169, H:₹309, F:₹529), Kadhai Chicken (Q:₹159, H:₹289, F:₹499), Aromatic Dum Chicken Biryani (Q:₹129, H:₹249, F:₹449)',
+        price: 169,
+        img: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'cat_6',
+        name: '6. Exclusive Egg Delights',
+        desc: 'Classic Masala Anda Bhurji Pav (₹99), Homestyle Desi Egg Curry (2 Eggs) (₹149), Classic Egg Omelette / Masala Half Fry (₹79), Mumbai Style Double Bread Omelette (₹99)',
+        price: 99,
+        img: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'cat_7',
+        name: '7. Breads & Accompaniments',
+        desc: 'Soft Homestyle Tawa Roti (₹7 per pc), Aromatic Jeera Rice (Q:₹69, H:₹109, F:₹169), Steamed Basmati Rice (Q:₹59, H:₹89, F:₹149)',
+        price: 7,
+        img: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'cat_8',
+        name: '8. Extra Amul Butter Add-on (As Per Market Rate)',
+        desc: '1 Amul Butter Cube (10g) - ₹12 | 2 Amul Butter Cubes - ₹22 | 3 Amul Butter Cubes - ₹30 (Served separately, items will be sent without pre-applied butter as requested)',
+        price: 12,
+        img: 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'cat_9',
+        name: '9. 👑 The Royal Kheer Studio (Our Signature USP)',
+        desc: 'Shahi Rice & Dry Fruit Kheer (Small ₹89 | Med ₹129 | Large ₹249), Golden Vermicelli & Mawa Kheer (Small ₹79 | Med ₹119 | Large ₹229), Sabudana & Makhana Royal Kheer (Small ₹99 | Med ₹139 | Large ₹269)',
+        price: 89,
+        img: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=700&q=80'
+      }
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Update Menu with Butter Add-on
+      if (typeof defaultMenuData !== 'undefined') {
+        defaultMenuData.length = 0;
+        finalGourmetMenuWithButter.forEach(item => defaultMenuData.push(item));
+        localStorage.setItem('tcp_custom_menu_data', JSON.stringify(defaultMenuData));
+
+        if (typeof renderMainMenu === 'function') renderMainMenu(defaultMenuData);
+        if (typeof renderSmartRecommendations === 'function') renderSmartRecommendations();
+      }
+
+      // 2. Render Virtual Membership Card & PhonePe QR Box (if not already added)
+      const container = document.querySelector('.container');
+      if (container && !document.getElementById('virtualMembershipAndQrSection')) {
+        const section = document.createElement('div');
+        section.id = 'virtualMembershipAndQrSection';
+        section.style.cssText = 'margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;';
+
+        section.innerHTML = `
+          <!-- Virtual Privilege Membership Card UI -->
+          <div style="background: radial-gradient(circle at center, #1f1b12 0%, #0d0d0d 100%); border: 2px solid var(--gold-primary, #d4af37); border-radius: 16px; padding: 22px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.8); color: #fff;">
+            <div style="text-align: center; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 12px; margin-bottom: 15px;">
+              <span style="font-size: 0.65rem; letter-spacing: 3px; color: var(--gold-light, #f3e5ab); display: block;">THE CRAFTED PLATE</span>
+              <span style="font-size: 0.6rem; color: #999; letter-spacing: 1px;">CLOUD KITCHEN</span>
+              <h3 style="font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--gold-primary, #d4af37); margin-top: 5px; letter-spacing: 1px;">PRIVILEGE MEMBERSHIP CARD</h3>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 0.8rem;">
+              <div>
+                <p style="color: #aaa; font-size: 0.7rem;">MEMBER:</p>
+                <strong style="color: #fff; font-size: 0.9rem;">PARAS KARAN</strong>
+                <p style="color: #aaa; font-size: 0.7rem; margin-top: 4px;">MEMBER ID: <span style="color:var(--gold-primary);">TCP456789</span></p>
+                <p style="color: #aaa; font-size: 0.7rem;">VALID THRU: <span style="color:#fff;">11/27</span> | STATUS: <span style="color:#2ecc71; font-weight:700;">ACTIVE</span></p>
+              </div>
+              <div style="background: rgba(212,175,55,0.1); border: 1px solid var(--gold-primary); padding: 8px 12px; border-radius: 8px; text-align: center;">
+                <span style="font-size: 0.65rem; color: var(--gold-light); display: block;">VERIFIED</span>
+                <span style="font-size: 0.9rem; color: var(--gold-primary);">👑 VIP</span>
+              </div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.5); border: 1px dashed rgba(212,175,55,0.4); border-radius: 8px; padding: 10px; display: flex; justify-content: space-around; text-align: center; font-size: 0.7rem; color: #ccc;">
+              <div>🤝 <br><b>*Unlimited</b><br>Bargaining Power</div>
+              <div style="border-left:1px solid #333; border-right:1px solid #333; padding:0 8px;">🏷️ <br><b>All-Day</b><br>15% OFF</div>
+              <div>🚚 <br><b>*Priority</b><br>Delivery</div>
+            </div>
+          </div>
+
+          <!-- PhonePe QR Box UI -->
+          <div style="background: #0d0d0d; border: 2px solid var(--gold-primary, #d4af37); border-radius: 16px; padding: 22px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+            <div style="display:inline-block; background:#5f259f; color:#fff; padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.75rem; margin-bottom:8px;">PhonePe</div>
+            <h4 style="color:#fff; font-size:0.95rem; margin-bottom:4px;">ACCEPTED HERE</h4>
+            <p style="font-size:0.75rem; color:#aaa; margin-bottom:12px;">Scan & Pay Using PhonePe App</p>
+
+            <div style="background:#fff; padding:12px; border-radius:8px; display:inline-block; margin-bottom:10px;">
+              <div style="width:130px; height:130px; background:#000; color:var(--gold-primary); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.8rem; border-radius:4px; text-align:center; padding:10px; border:2px dashed var(--gold-primary);">
+                [ PhonePe QR: Paras Karan ]
+              </div>
+            </div>
+
+            <p style="font-size:0.8rem; color:#fff; font-weight:600; margin-bottom:8px;">Paras Karan</p>
+            <div style="max-width:260px; margin:0 auto;">
+              <input type="text" id="membership-utr-input" placeholder="Enter UTR / Transaction ID" style="width:100%; padding:8px; background:#1a1a1a; border:1px solid var(--gold-primary); color:#fff; border-radius:6px; font-size:0.78rem; margin-bottom:6px;">
+              <button type="button" class="btn-gold" style="width:100%; padding:8px; font-size:0.8rem;" onclick="alert('✅ UTR Verified! Membership activated successfully.')">Activate Membership</button>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(section);
+      }
+    });
+  })();
+</script>
 </body>
 </html>

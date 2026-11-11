@@ -2565,5 +2565,160 @@
     };
   }
 </script>
+<!-- THE CRAFTED PLATE: FLOATING CART SYSTEM (PART 1) -->
+<script>
+  (function() {
+    window.TCP_CART_KEY = 'tcp_cart';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (document.getElementById('tcp-cart-ui-styles')) return;
+      const style = document.createElement('style');
+      style.id = 'tcp-cart-ui-styles';
+      style.innerHTML = `
+        .tcp-floating-cart-btn {
+          position: fixed; bottom: 25px; right: 25px; z-index: 9998;
+          background: linear-gradient(135deg, #d4af37, #aa8c2c); color: #000;
+          padding: 12px 22px; border-radius: 50px; font-weight: bold; font-family: inherit;
+          box-shadow: 0 8px 25px rgba(0,0,0,0.6); cursor: pointer; display: flex; align-items: center; gap: 8px;
+          border: 2px solid #fff; transition: transform 0.2s ease;
+        }
+        .tcp-floating-cart-btn:hover { transform: scale(1.05); }
+        .tcp-cart-modal-overlay {
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          background: rgba(0,0,0,0.88); z-index: 9999; display: flex;
+          align-items: center; justify-content: center; font-family: inherit;
+        }
+        .tcp-cart-modal-box {
+          background: linear-gradient(135deg, #1f1b12, #0d0d0d);
+          border: 2px solid var(--gold-primary, #d4af37); padding: 22px;
+          border-radius: 16px; width: 90%; max-width: 420px; color: #fff;
+          box-shadow: 0 15px 35px rgba(0,0,0,0.9); max-height: 80vh; overflow-y: auto;
+        }
+        .tcp-cart-item-row {
+          display: flex; justify-content: space-between; align-items: center;
+          padding: 8px 0; border-bottom: 1px solid rgba(212,175,55,0.2); font-size: 0.9rem;
+        }
+      `;
+      document.head.appendChild(style);
+
+      // Inject Floating Cart Button
+      if (!document.getElementById('tcpFloatingCartBtn')) {
+        const btn = document.createElement('div');
+        btn.id = 'tcpFloatingCartBtn';
+        btn.className = 'tcp-floating-cart-btn';
+        btn.innerHTML = `🛒 कार्ट देखें (<span id="tcpCartCount">0</span>)`;
+        btn.onclick = window.openTcpCartModal;
+        document.body.appendChild(btn);
+        window.updateTcpCartCount();
+      }
+    });
+
+    window.updateTcpCartCount = function() {
+      let cart = [];
+      try { cart = JSON.parse(localStorage.getItem(window.TCP_CART_KEY)) || []; } catch(e) {}
+      const countEl = document.getElementById('tcpCartCount');
+      if (countEl) {
+        const totalQty = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
+        countEl.innerText = totalQty;
+      }
+    };
+  })();
+</script>
+<!-- THE CRAFTED PLATE: FLOATING CART SYSTEM (PART 2) -->
+<script>
+  (function() {
+    window.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('click', function(e) {
+        const target = e.target.closest('button') || e.target.closest('a') || e.target;
+        if (!target) return;
+
+        const text = (target.innerText || target.value || '').toLowerCase();
+        
+        // When user clicks any "Add" button
+        if (text.includes('add') || text.includes('शामिल') || target.classList.contains('add-btn') || target.classList.contains('add-to-cart')) {
+          const card = target.closest('.card') || target.closest('.product') || target.closest('div') || target.parentElement;
+          let itemName = "Gourmet Dish";
+          let itemPrice = 199;
+
+          if (card) {
+            const nameEl = card.querySelector('h2, h3, h4, .title, .name');
+            const priceEl = card.querySelector('.price, span, b');
+            if (nameEl) itemName = nameEl.innerText.trim();
+            if (priceEl) {
+              const pMatch = priceEl.innerText.match(/\d+/);
+              if (pMatch) itemPrice = parseInt(pMatch[0], 10);
+            }
+          }
+
+          let cart = [];
+          try { cart = JSON.parse(localStorage.getItem(window.TCP_CART_KEY)) || []; } catch(e) {}
+          
+          let existing = cart.find(i => i.name === itemName);
+          if (existing) {
+            existing.qty = (existing.qty || 1) + 1;
+          } else {
+            cart.push({ name: itemName, price: itemPrice, qty: 1 });
+          }
+          localStorage.setItem(window.TCP_CART_KEY, JSON.stringify(cart));
+
+          if (typeof window.updateTcpCartCount === 'function') window.updateTcpCartCount();
+
+          const orig = target.innerText;
+          target.innerText = "✔ Added!";
+          setTimeout(() => { target.innerText = orig; }, 800);
+        }
+      }, true);
+    });
+
+    window.openTcpCartModal = function() {
+      let cart = [];
+      try { cart = JSON.parse(localStorage.getItem(window.TCP_CART_KEY)) || []; } catch(e) {}
+
+      if (document.getElementById('tcpCartModal')) document.getElementById('tcpCartModal').remove();
+
+      let itemsHtml = '';
+      let totalBill = 0;
+
+      if (cart.length === 0) {
+        itemsHtml = `<p style="text-align:center; color:#aaa; padding:20px 0;">आपका कार्ट खाली है। पहले कुछ स्वादिष्ट डिश जोड़ें!</p>`;
+      } else {
+        cart.forEach((item) => {
+          let subtotal = item.price * (item.qty || 1);
+          totalBill += subtotal;
+          itemsHtml += `
+            <div class="tcp-cart-item-row">
+              <div>
+                <b>${item.name}</b><br>
+                <span style="font-size:0.8rem; color:#aaa;">₹${item.price} × ${item.qty || 1}</span>
+              </div>
+              <div style="color: var(--gold-primary, #d4af37); font-weight:bold;">₹${subtotal}</div>
+            </div>
+          `;
+        });
+      }
+
+      const overlay = document.createElement('div');
+      overlay.id = 'tcpCartModal';
+      overlay.className = 'tcp-cart-modal-overlay';
+      overlay.innerHTML = `
+        <div class="tcp-cart-modal-box">
+          <h3 style="color: var(--gold-primary, #d4af37); font-family: 'Cinzel', serif; text-align:center; margin-bottom:10px;">👑 YOUR GOURMET CART</h3>
+          <div style="max-height: 250px; overflow-y: auto; margin-bottom: 12px;">
+            ${itemsHtml}
+          </div>
+          ${cart.length > 0 ? `
+            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.05rem; margin-bottom:15px; border-top:1px solid #444; padding-top:10px;">
+              <span>कुल योग (Total):</span>
+              <span style="color:var(--gold-primary);">₹${totalBill}</span>
+            </div>
+            <button type="button" onclick="document.getElementById('tcpCartModal').remove();" style="width:100%; padding:12px; background:var(--gold-primary); color:#000; font-weight:bold; border:none; border-radius:8px; cursor:pointer; margin-bottom:8px;">चेकआउट करें (Proceed)</button>
+          ` : ''}
+          <button type="button" onclick="document.getElementById('tcpCartModal').remove();" style="width:100%; padding:10px; background:#333; color:#fff; border:none; border-radius:8px; cursor:pointer;">बंद करें (Close)</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    };
+  })();
+</script>
 </body>
 </html>

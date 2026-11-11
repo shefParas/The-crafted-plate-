@@ -2545,5 +2545,25 @@
     }
   })();
 </script>
+<!-- THE CRAFTED PLATE: UNIVERSAL CART FIX PATCH -->
+<script>
+  // Universal Cart Getter (Fixes empty cart issue by scanning all storage keys)
+  if (typeof window.getUniversalCart !== 'function') {
+    window.getUniversalCart = function() {
+      let items = [];
+      const keys = ['tcp_cart', 'cart', 'shopping_cart', 'TCP_CART'];
+      for (let k of keys) {
+        try {
+          const data = JSON.parse(localStorage.getItem(k));
+          if (Array.isArray(data) && data.length > 0) {
+            items = data;
+            break;
+          }
+        } catch(e) {}
+      }
+      return items;
+    };
+  }
+</script>
 </body>
 </html>

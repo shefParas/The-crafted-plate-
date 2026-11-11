@@ -1,761 +1,1131 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Crafted Plate | Luxury Cloud Kitchen</title>
-    <style>
-        :root {
-            --bg-dark: #0b0b0b; --card-bg: #161616; --card-inner: #202020;
-            --gold: #d4af37; --gold-light: #f3e5ab; --gold-hover: #e5c158;
-            --text-main: #ffffff; --text-muted: #a0a0a0; --border-color: #2e2e2e;
-            --green: #2ecc71; --red: #e74c3c; --orange: #f39c12;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-main); padding-bottom: 70px; line-height: 1.5; }
-        header { background: rgba(10, 10, 10, 0.96); border-bottom: 2px solid var(--gold); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; flex-wrap: wrap; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
-        .brand-box { display: flex; align-items: center; gap: 12px; }
-        .brand-icon { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--gold); background: #1a1a1a; }
-        .logo h1 { color: var(--gold); font-size: 21px; font-weight: 800; letter-spacing: 1.5px; }
-        .logo p { font-size: 10px; color: var(--gold-light); text-transform: uppercase; letter-spacing: 2px; }
-        .nav-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-        .btn { background: var(--gold); color: #000; border: none; padding: 9px 15px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.25s; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
-        .btn:hover { background: var(--gold-hover); transform: translateY(-1px); }
-        .btn-outline { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
-        .btn-outline:hover { background: var(--gold); color: #000; }
-        .btn-green { background: var(--green); color: #fff; }
-        .btn-red { background: var(--red); color: #fff; }
-        .btn-sm { padding: 6px 10px; font-size: 12px; }
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
-        .role-banner { background: linear-gradient(90deg, #1a1505, #2a2008, #1a1505); border: 1px solid var(--gold); padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .badge { background: var(--gold); color: #000; padding: 3px 9px; font-size: 11px; border-radius: 4px; font-weight: 800; text-transform: uppercase; }
-        .badge-veg { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid #2ecc71; }
-        .badge-nonveg { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid #e74c3c; }
-        .badge-egg { background: rgba(243, 156, 18, 0.15); color: #f39c12; border: 1px solid #f39c12; }
-        .panel-view { display: none; }
-        .panel-view.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        .category-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin: 15px 0; }
-        .cat-pill { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--border-color); padding: 8px 15px; border-radius: 25px; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: 600; }
-        .cat-pill.active, .cat-pill:hover { background: var(--gold); color: #000; border-color: var(--gold); }
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(275px, 1fr)); gap: 18px; }
-        .menu-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; transition: 0.25s; }
-        .menu-card:hover { border-color: var(--gold); box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15); }
-        .menu-card h3 { color: var(--gold-light); font-size: 17px; margin: 8px 0 4px; }
-        .menu-card p { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
-        .price-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; }
-        .price-tag { font-size: 19px; font-weight: 800; color: #fff; }
-        .member-price-tag { font-size: 11px; color: var(--gold); display: block; }
-        .box-card { background: var(--card-bg); border: 1px solid var(--gold); border-radius: 12px; padding: 20px; margin-top: 25px; }
-        .box-title { color: var(--gold); font-size: 19px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        .cart-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 14px; }
-        .qty-btn { background: #2b2b2b; color: #fff; border: 1px solid var(--gold); width: 26px; height: 26px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .bargain-box { background: var(--card-inner); border: 1px dashed var(--gold); padding: 15px; border-radius: 8px; margin-top: 15px; }
-        .input-field { width: 100%; padding: 10px 12px; background: #242424; border: 1px solid #444; color: #fff; border-radius: 6px; font-size: 14px; }
-        .input-field:focus { outline: none; border-color: var(--gold); }
-        .tracker-wrapper { margin: 25px 0 15px; }
-        .tracker-steps { display: flex; justify-content: space-between; position: relative; margin-bottom: 20px; }
-        .tracker-steps::before { content: ''; position: absolute; top: 16px; left: 10%; right: 10%; height: 3px; background: #333; z-index: 1; }
-        .t-step { position: relative; z-index: 2; text-align: center; flex: 1; font-size: 12px; color: var(--text-muted); }
-        .t-circle { width: 35px; height: 35px; border-radius: 50%; background: #2a2a2a; border: 2px solid #555; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-weight: bold; transition: 0.3s; }
-        .t-step.done .t-circle { background: var(--green); border-color: var(--green); color: #fff; }
-        .t-step.active .t-circle { background: var(--gold); border-color: #fff; color: #000; box-shadow: 0 0 12px var(--gold); }
-        .t-step.active { color: var(--gold); font-weight: bold; }
-        .driver-card { background: #1c1c1c; border: 1px solid #3a3a3a; border-left: 4px solid var(--gold); padding: 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 15px; }
-        .policy-box { background: rgba(243, 156, 18, 0.08); border: 1px solid var(--orange); padding: 15px; border-radius: 8px; margin-top: 18px; }
-        .luxury-card-preview { max-width: 460px; margin: 20px auto; background: radial-gradient(circle at top right, #2c2511, #0d0d0d 70%); border: 2px solid var(--gold); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.25); position: relative; overflow: hidden; text-align: left; }
-        .luxury-card-preview::after { content: 'VERIFIED VIP'; position: absolute; bottom: 18px; right: -28px; background: var(--gold); color: #000; font-size: 10px; font-weight: 900; padding: 4px 35px; transform: rotate(-35deg); }
-        .card-header-center { text-align: center; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 12px; margin-bottom: 15px; }
-        .card-header-center h4 { color: var(--gold); letter-spacing: 2px; font-size: 15px; }
-        .card-header-center h2 { color: var(--gold-light); font-size: 19px; letter-spacing: 1px; margin-top: 4px; }
-        .card-body-row { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
-        .card-perks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-top: 1px solid rgba(212,175,55,0.3); margin-top: 15px; padding-top: 12px; text-align: center; font-size: 11px; color: var(--gold-light); }
-        .phonepe-box { background: #ffffff; color: #000000; max-width: 290px; margin: 15px auto; padding: 18px; border-radius: 12px; text-align: center; border: 3px solid #5f259f; box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
-        .phonepe-badge { background: #5f259f; color: #fff; font-weight: 800; padding: 5px 14px; border-radius: 20px; display: inline-block; font-size: 14px; margin-bottom: 8px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 22px; }
-        .stat-card { background: linear-gradient(145deg, #1f1c12, #141414); border: 1px solid var(--gold); border-radius: 10px; padding: 15px; text-align: center; }
-        .stat-card h5 { color: var(--text-muted); font-size: 12px; text-transform: uppercase; margin-bottom: 6px; }
-        .stat-card h2 { color: var(--gold); font-size: 24px; font-weight: 800; }
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-        .order-card { background: var(--card-inner); border: 1px solid #3a3a3a; padding: 14px; border-radius: 8px; margin-bottom: 12px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Crafted Plate | Luxury Cloud Kitchen</title>
+  <meta name="theme-color" content="#0d0d0d">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0a0a;
+      --bg-card: #141414;
+      --bg-elevated: #1f1f1f;
+      --gold-primary: #d4af37;
+      --gold-light: #f3e5ab;
+      --copper-accent: #b87333;
+      --text-main: #f5f5f5;
+      --text-muted: #9e9e9e;
+      --danger: #e74c3c;
+      --success: #2ecc71;
+      --border-gold: rgba(212, 175, 55, 0.28);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; overflow-x: hidden; padding-bottom: 90px; }
+    h1, h2, h3, .brand-font { font-family: 'Cinzel', serif; letter-spacing: 1px; }
+    header {
+      position: sticky; top: 0; z-index: 999;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-gold);
+      padding: 14px 20px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+    }
+    .logo-area { display: flex; align-items: center; gap: 10px; }
+    .logo-title { font-size: 1.5rem; color: var(--gold-primary); font-weight: 700; text-shadow: 0 2px 10px rgba(212,175,55,0.3); }
+    .logo-sub { font-size: 0.7rem; color: var(--gold-light); display: block; letter-spacing: 2px; text-transform: uppercase; }
+    .nav-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold-primary), var(--copper-accent));
+      color: #000; font-weight: 600; border: none; padding: 8px 16px;
+      border-radius: 6px; cursor: pointer; transition: 0.3s; font-size: 0.85rem;
+    }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(212,175,55,0.4); }
+    .btn-outline {
+      background: transparent; color: var(--gold-primary);
+      border: 1px solid var(--gold-primary); padding: 7px 14px;
+      border-radius: 6px; cursor: pointer; transition: 0.3s; font-size: 0.85rem;
+    }
+    .btn-outline:hover { background: var(--gold-primary); color: #000; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .hero-banner {
+      background: radial-gradient(circle at center, #221c10 0%, #0a0a0a 100%);
+      border: 1px solid var(--border-gold); border-radius: 14px;
+      padding: 28px 20px; text-align: center; margin-bottom: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+    .hero-banner h1 { color: var(--gold-primary); font-size: 2rem; margin-bottom: 8px; }
+    .hero-banner p { color: var(--text-muted); font-size: 0.95rem; max-width: 650px; margin: 0 auto 15px; }
+          .section-title { color: var(--gold-primary); font-size: 1.4rem; margin: 25px 0 15px; border-left: 4px solid var(--gold-primary); padding-left: 12px; }
+    .offers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 15px; margin-bottom: 25px; }
+    .offer-card {
+      background: linear-gradient(145deg, #1a160d, #121212);
+      border: 1px dashed var(--gold-primary); border-radius: 12px; padding: 16px; position: relative;
+    }
+    .offer-badge {
+      background: var(--gold-primary); color: #000; font-size: 0.7rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 20px; display: inline-block; margin-bottom: 8px;
+    }
+    .search-bar-wrap { margin-bottom: 22px; display: flex; gap: 10px; }
+    .search-input {
+      width: 100%; padding: 12px 16px; background: var(--bg-card);
+      border: 1px solid var(--border-gold); color: var(--text-main);
+      border-radius: 8px; font-size: 0.95rem; outline: none;
+    }
+    .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+    .dish-card {
+      background: var(--bg-card); border: 1px solid var(--border-gold);
+      border-radius: 12px; overflow: hidden; transition: 0.3s; display: flex; flex-direction: column;
+    }
+    .dish-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(212,175,55,0.18); }
+    .dish-img { width: 100%; height: 185px; object-fit: cover; border-bottom: 1px solid var(--border-gold); cursor: pointer; }
+    .dish-body { padding: 15px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .dish-title { font-size: 1.05rem; font-weight: 600; color: var(--gold-light); margin-bottom: 5px; cursor: pointer; }
+    .dish-desc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; }
+    .dish-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+    .dish-price { font-size: 1.1rem; font-weight: 700; color: var(--gold-primary); }
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); display: none; justify-content: center;
+      align-items: center; z-index: 2000; padding: 15px; overflow-y: auto;
+    }
+    .modal-box {
+      background: var(--bg-card); border: 1px solid var(--gold-primary);
+      border-radius: 12px; max-width: 520px; width: 100%; padding: 22px;
+      position: relative; max-height: 92vh; overflow-y: auto;
+    }
+    .close-btn { position: absolute; top: 12px; right: 16px; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; background: none; border: none; }
+    .input-group { margin-bottom: 12px; }
+    .input-group label { display: block; font-size: 0.82rem; color: var(--gold-light); margin-bottom: 4px; }
+    .input-group input, .input-group textarea, .input-group select {
+      width: 100%; padding: 10px; background: var(--bg-elevated);
+      border: 1px solid var(--border-gold); color: #fff; border-radius: 6px; font-size: 0.9rem;
+    }
+    .privacy-note {
+      font-size: 0.75rem; color: #b0b0b0; background: rgba(212,175,55,0.08);
+      border-left: 3px solid var(--gold-primary); padding: 8px 10px; margin-top: 6px; border-radius: 4px;
+    }
+    .install-float-btn {
+      position: fixed; bottom: 20px; left: 20px; z-index: 1500;
+      background: linear-gradient(135deg, #d4af37, #b87333); color: #000;
+      font-weight: 700; padding: 11px 18px; border-radius: 30px;
+      box-shadow: 0 6px 20px rgba(212,175,55,0.5); border: 2px solid #fff;
+      cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem;
+    }
+    .cart-float-btn {
+      position: fixed; bottom: 20px; right: 20px; z-index: 1500;
+      background: var(--gold-primary); color: #000; font-weight: 700;
+      padding: 12px 22px; border-radius: 30px; box-shadow: 0 6px 20px rgba(0,0,0,0.8);
+      border: 2px solid var(--gold-light); cursor: pointer; font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="brand-box">
-            <div class="brand-icon">🍽️</div>
-            <div class="logo">
-                <h1>THE CRAFTED PLATE</h1>
-                <p>Luxury Cloud Kitchen</p>
-            </div>
-        </div>
-        <div class="nav-bar" id="main-nav">
-            <button class="btn" id="nav-menu-btn" onclick="openPanel('customer-panel')">📖 Menu & Order</button>
-            <button class="btn btn-outline" id="nav-member-btn" onclick="openPanel('membership-panel')">👑 Privilege Card (₹399)</button>
-            <button class="btn btn-outline" id="nav-admin-btn" style="display:none;" onclick="openPanel('admin-panel')">⚙️ Admin & Revenue</button>
-            <button class="btn btn-outline" id="nav-delivery-btn" style="display:none;" onclick="openPanel('delivery-panel')">🛵 Delivery Panel</button>
-            <button class="btn btn-outline" id="nav-login-btn" onclick="openPanel('login-panel')">🔐 ID Login</button>
-            <button class="btn btn-red btn-sm" id="nav-logout-btn" style="display:none;" onclick="logoutRole()">Logout</button>
-        </div>
-    </header>
 
-    <div class="container">
-        <div class="role-banner">
-            <div>
-                <span>Current Mode: </span>
-                <span class="badge" id="active-role-badge">Public Guest</span>
-                <span id="cloud-sync-indicator" style="font-size:12px; color:var(--gold-light); margin-left:8px;">☁️ Local + Cloud Ready</span>
-                <span id="member-discount-note" style="font-size: 12px; color: var(--green); margin-left: 8px; display: none;">✔ 15% Member OFF + Unlimited Bargaining Active!</span>
-            </div>
-            <div style="font-size: 12px; color: var(--gold-light);">Kitchen Helpline / WhatsApp: <b id="header-helpline">8269083404</b></div>
-        </div>
-                <!-- 1. CUSTOMER PANEL -->
-        <section id="customer-panel" class="panel-view active">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                <div>
-                    <h2 style="color:var(--gold);">Explore Our Crafted Menu</h2>
-                    <p style="font-size:13px; color:var(--text-muted);">Order directly or bargain your own price in the cart below!</p>
-                </div>
-                <button class="btn btn-outline btn-sm" onclick="document.getElementById('cart-box').scrollIntoView({behavior:'smooth'})">🛒 View Cart (<span id="cart-count-top">0</span>)</button>
-            </div>
-
-            <div class="category-tabs" id="category-tabs"></div>
-            <div class="menu-grid" id="menu-grid"></div>
-
-            <div class="box-card" id="cart-box">
-                <div class="box-title">
-                    <span>🛒 Your Order Cart & Smart Bargain</span>
-                    <button class="btn btn-red btn-sm" onclick="clearCart()">Clear Cart</button>
-                </div>
-                <div id="cart-list"><p style="color:var(--text-muted); font-size:14px;">Your cart is empty.</p></div>
-                <div id="cart-pricing-summary" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid var(--border-color);">
-                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:5px;"><span>Menu Total:</span><span id="bill-menu-total">₹0</span></div>
-                    <div id="bill-member-row" style="display:none; justify-content:space-between; font-size:14px; color:var(--green); margin-bottom:5px;"><span>👑 Privilege Member 15% OFF:</span><span id="bill-member-save">-₹0</span></div>
-                    <div id="bill-bargain-row" style="display:none; justify-content:space-between; font-size:14px; color:var(--gold); margin-bottom:5px;"><span>🤝 Offered Bargain Price:</span><span id="bill-bargain-val">₹0</span></div>
-                    <div style="display:flex; justify-content:space-between; font-size:20px; font-weight:800; color:var(--gold); margin-top:8px;"><span>Final Payable Amount:</span><span id="bill-final-payable">₹0</span></div>
-
-                    <div class="bargain-box">
-                        <h4 style="color:var(--gold); margin-bottom:6px;">💡 Make Your Own Offer (Smart Bargain)!</h4>
-                        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;" id="bargain-rule-text">Public guests can bargain up to 10% off. Deeper bargaining unlocks via Privilege Card.</p>
-                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                            <input type="number" id="custom-offer-input" class="input-field" style="flex:1; min-width:180px;" placeholder="Enter your Offer Price (₹)">
-                            <button class="btn" onclick="submitBargainOffer()">🤝 Apply Offer Price</button>
-                        </div>
-                        <p id="bargain-feedback" style="font-size:12px; margin-top:8px;"></p>
-                    </div>
-
-                    <div class="grid-2" style="margin-top:18px;">
-                        <div>
-                            <h4 style="color:var(--gold-light); margin-bottom:10px;">📍 Delivery Details</h4>
-                            <input type="text" id="cust-name" class="input-field" placeholder="Your Full Name *" style="margin-bottom:8px;">
-                            <input type="tel" id="cust-phone" class="input-field" placeholder="Mobile / WhatsApp Number *" style="margin-bottom:8px;">
-                            <input type="text" id="cust-address" class="input-field" placeholder="Complete Delivery Address *" style="margin-bottom:8px;">
-                            <select id="cust-pay-mode" class="input-field" onchange="toggleOrderPaymentQR()">
-                                <option value="Online PhonePe UPI (Prepaid)">Online PhonePe / UPI (Scan & Pay Now)</option>
-                                <option value="Cash / UPI on Delivery">Cash / Pay on Delivery</option>
-                            </select>
-                        </div>
-                        <div id="checkout-qr-container">
-                            <div class="phonepe-box" style="margin:0 auto;">
-                                <span class="phonepe-badge">पे PhonePe</span>
-                                <p style="font-size:11px; font-weight:bold; color:#444;">ACCEPTED HERE - Scan & Pay</p>
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi%3A%2F%2Fpay%3Fpa%3D8269083404-2%40ybl%26pn%3DParas%2520Karan%26cu%3DINR" alt="PhonePe QR" style="width:155px; height:155px; margin:8px auto; display:block; border:1px solid #ddd; padding:4px; border-radius:6px;">
-                                <p style="font-weight:800; font-size:14px; color:#000;">Paras Karan</p>
-                                <p style="font-size:12px; color:#5f259f; font-weight:bold; margin-top:2px;">UPI ID: 8269083404-2@ybl</p>
-                                <button class="btn btn-sm" style="margin-top:6px; width:100%;" onclick="copyUPI()">📋 Copy UPI ID</button>
-                                <input type="text" id="order-utr-input" class="input-field" placeholder="Enter Paid UTR / Ref No. (Optional)" style="margin-top:8px; background:#f4f4f4; color:#000; font-size:12px;">
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn btn-green" style="width:100%; padding:14px; font-size:16px; margin-top:18px;" onclick="placeCustomerOrder()">✅ Confirm Order (Auto-Saves to Google Sheet & WhatsApp)</button>
-                </div>
-            </div>
-                        <div class="box-card" id="live-tracker-box">
-                <div class="box-title">
-                    <span>🛵 Live Order Tracking</span>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <button class="btn btn-outline btn-sm" onclick="syncFromGoogleSheet()">🔄 Refresh</button>
-                        <span class="badge" id="live-order-id-badge">No Active Order</span>
-                    </div>
-                </div>
-                <div id="no-active-order-msg" style="color:var(--text-muted); font-size:14px;">Place an order above to see real-time tracking.</div>
-                <div id="active-order-tracker-content" style="display:none;">
-                    <div style="display:flex; justify-content:space-between; flex-wrap:wrap; font-size:13px; color:var(--gold-light); margin-bottom:10px;">
-                        <span id="tracker-items-summary">Items: -</span><span id="tracker-price-summary">Final Bill: ₹0</span>
-                    </div>
-                    <div class="tracker-wrapper">
-                        <div class="tracker-steps">
-                            <div class="t-step active" id="t-step-1"><div class="t-circle">1</div><div>Order Placed</div></div>
-                            <div class="t-step" id="t-step-2"><div class="t-circle">2</div><div>Cooking</div></div>
-                            <div class="t-step" id="t-step-3"><div class="t-circle">3</div><div>Out for Delivery</div></div>
-                            <div class="t-step" id="t-step-4"><div class="t-circle">4</div><div>Delivered</div></div>
-                        </div>
-                    </div>
-                    <div class="driver-card">
-                        <div>
-                            <div style="font-size:11px; color:var(--gold); text-transform:uppercase; font-weight:bold;">Delivery Partner</div>
-                            <h4 style="font-size:16px; margin:2px 0;" id="cust-driver-name">Rahul Kumar</h4>
-                            <p style="font-size:12px; color:var(--text-muted);" id="cust-driver-status-msg">Waiting for dispatch...</p>
-                        </div>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                            <a id="cust-driver-call-btn" href="tel:8269083404" class="btn btn-sm">📞 Call</a>
-                            <a id="cust-driver-map-btn" href="https://maps.google.com" target="_blank" class="btn btn-outline btn-sm">📍 GPS</a>
-                        </div>
-                    </div>
-                    <div class="policy-box">
-                        <h4 style="color:var(--orange); margin-bottom:6px;">🔄 Modify / Cancel Policy</h4>
-                        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Before prep: Free. During cooking: 20% fee. Ready: Call to bargain!</p>
-                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                            <button class="btn btn-outline btn-sm" onclick="handleOrderModificationRequest()">✏️ Modify Order</button>
-                            <button class="btn btn-sm" style="background:var(--orange); color:#000;" onclick="callKitchenToNegotiateReadyOrder()">📞 Call & Bargain</button>
-                        </div>
-                        <div id="modification-result-box" style="margin-top:10px; font-size:13px; color:var(--gold-light); display:none;"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-                <!-- 2. MEMBERSHIP PANEL -->
-        <section id="membership-panel" class="panel-view">
-            <div class="box-card" style="text-align:center;">
-                <span class="badge">VIP PRIVILEGE CLUB</span>
-                <h2 style="color:var(--gold); font-size:26px; margin-top:8px;">The Crafted Plate Privilege Membership</h2>
-                <p style="color:var(--text-muted); max-width:600px; margin:6px auto 15px; font-size:14px;">Instant activation! Unlock Unlimited Bargaining Power, Flat 15% OFF, and Priority Delivery.</p>
-
-                <div class="luxury-card-preview" id="digital-card-element">
-                    <div class="card-header-center">
-                        <h4>👨‍🍳 THE CRAFTED PLATE • CLOUD KITCHEN</h4>
-                        <h2>PRIVILEGE MEMBERSHIP CARD</h2>
-                    </div>
-                    <div class="card-body-row">
-                        <div style="font-size:40px; border:2px solid var(--gold); border-radius:50%; width:68px; height:68px; display:flex; align-items:center; justify-content:center; color:var(--gold);">🍴</div>
-                        <div style="flex:1; font-size:13px; line-height:1.7;">
-                            <div>MEMBER: <b style="color:var(--gold-light);" id="card-holder-name">GUEST PREVIEW</b></div>
-                            <div>MEMBER ID: <b style="color:var(--gold);" id="card-holder-id">TCP-XXXXXX</b></div>
-                            <div>VALID THRU: <b id="card-valid-date">11/2027 (1 Year)</b></div>
-                            <div>STATUS: <b style="color:var(--green);" id="card-status-text">READY TO ACTIVATE</b></div>
-                        </div>
-                    </div>
-                    <div class="card-perks-grid">
-                        <div>🤝<br><b>Unlimited</b><br>Bargaining</div>
-                        <div>🏷️<br><b>All-Day</b><br>15% OFF</div>
-                        <div>🚀<br><b>Priority</b><br>Fast Delivery</div>
-                    </div>
-                </div>
-
-                <div class="grid-2" style="max-width:750px; margin:25px auto 0; text-align:left; align-items:center;">
-                    <div class="phonepe-box" style="margin:0 auto;">
-                        <span class="phonepe-badge">पे PhonePe</span>
-                        <p style="font-size:12px; font-weight:bold; color:#222;">Pay ₹399 Membership Fee</p>
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi%3A%2F%2Fpay%3Fpa%3D8269083404-2%40ybl%26pn%3DParas%2520Karan%26am%3D399%26cu%3DINR" alt="PhonePe QR" style="width:160px; height:160px; margin:8px auto; display:block; border:1px solid #ccc; padding:4px; border-radius:6px;">
-                        <p style="font-weight:800; font-size:14px; color:#000;">Paras Karan</p>
-                        <p style="font-size:12px; color:#5f259f; font-weight:bold;">UPI: 8269083404-2@ybl</p>
-                        <button class="btn btn-sm" style="margin-top:6px; width:100%;" onclick="copyUPI()">📋 Copy UPI ID</button>
-                    </div>
-
-                    <div style="background:var(--card-inner); padding:20px; border-radius:10px; border:1px solid var(--border-color);">
-                        <h3 style="color:var(--gold); margin-bottom:10px;">⚡ Instant Activation</h3>
-                        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Pay ₹399 and enter UTR below. Activates immediately and saves to Cloud Sheet!</p>
-                        <input type="text" id="mem-buy-name" class="input-field" placeholder="Full Name *" style="margin-bottom:10px;">
-                        <input type="tel" id="mem-buy-phone" class="input-field" placeholder="Mobile Number *" style="margin-bottom:10px;">
-                        <input type="text" id="mem-buy-utr" class="input-field" placeholder="PhonePe 12-Digit UTR / Ref ID *" style="margin-bottom:12px;">
-                        <button class="btn btn-green" style="width:100%; padding:12px;" onclick="autoGenerateMembership()">⚡ Verify & Auto-Generate Card</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 3. SECURE LOGIN PANEL (UPDATED WITH PASSWORD & NO HINTS VISIBLE TO PUBLIC) -->
-        <section id="login-panel" class="panel-view">
-            <div class="box-card" style="max-width:440px; margin:30px auto; text-align:center;">
-                <h2 style="color:var(--gold); margin-bottom:8px;">🔐 Secure Staff & Admin Login</h2>
-                <p style="font-size:12px; color:var(--text-muted); margin-bottom:18px;">
-                    Apni Authorized ID aur Password darj karein.
-                </p>
-                <input type="text" id="role-login-input" class="input-field" placeholder="Enter Access ID (e.g. ADMIN001)" style="margin-bottom:10px; text-align:center; font-weight:bold;">
-                <input type="password" id="role-password-input" class="input-field" placeholder="Enter Password" style="margin-bottom:14px; text-align:center;">
-                <button class="btn" style="width:100%; padding:12px;" onclick="processRoleLogin()">Secure Login</button>
-            </div>
-        </section>
-                <!-- 4. DELIVERY PANEL -->
-        <section id="delivery-panel" class="panel-view">
-            <div class="box-card">
-                <div class="box-title">
-                    <span>🛵 Delivery Partner Dashboard</span>
-                    <button class="btn btn-outline btn-sm" onclick="syncFromGoogleSheet()">🔄 Sync Orders</button>
-                </div>
-                <div style="background:var(--card-inner); padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-color);">
-                    <h4 style="color:var(--gold); margin-bottom:10px;">📍 Partner Profile & Live GPS</h4>
-                    <div class="grid-2">
-                        <input type="text" id="deliv-boy-name-input" class="input-field" placeholder="Name">
-                        <input type="tel" id="deliv-boy-phone-input" class="input-field" placeholder="Mobile">
-                    </div>
-                    <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
-                        <input type="url" id="deliv-live-map-input" class="input-field" style="flex:1;" placeholder="Google Maps Live Link...">
-                        <button class="btn" onclick="saveDeliveryPartnerConfig()">💾 Update</button>
-                    </div>
-                </div>
-                <h4 style="color:var(--gold-light); margin-bottom:10px;">📦 Active Orders</h4>
-                <div id="delivery-orders-container"></div>
-            </div>
-        </section>
-
-        <!-- 5. ADMIN & REVENUE PANEL -->
-        <section id="admin-panel" class="panel-view">
-            <div class="box-card">
-                <div class="box-title">
-                    <span>👑 Owner Admin & Revenue Tracker</span>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <button class="btn btn-outline btn-sm" onclick="syncFromGoogleSheet()">☁️ Sync Sheet</button>
-                        <button class="btn btn-green btn-sm" onclick="exportOrdersCSV()">📥 Download Excel Report</button>
-                    </div>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card"><h5>Total Revenue</h5><h2 id="stat-total-rev">₹0</h2></div>
-                    <div class="stat-card"><h5>Today Sales</h5><h2 id="stat-today-rev">₹0</h2></div>
-                    <div class="stat-card"><h5>Membership Rev</h5><h2 id="stat-mem-rev">₹0</h2></div>
-                    <div class="stat-card"><h5>Orders (Done/Total)</h5><h2 id="stat-orders-count">0 / 0</h2></div>
-                </div>
-
-                <div style="background:rgba(46, 204, 113, 0.08); border:1px solid var(--green); padding:15px; border-radius:8px; margin-bottom:20px;">
-                    <h4 style="color:var(--green); margin-bottom:6px;">☁️ Google Sheets Cloud Database</h4>
-                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Paste your Google Apps Script Web App URL below:</p>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <input type="url" id="google-sheet-url-input" class="input-field" style="flex:1;" placeholder="https://script.google.com/macros/s/.../exec">
-                        <button class="btn btn-green" onclick="saveGoogleSheetURL()">🔗 Connect & Sync</button>
-                    </div>
-                </div>
-
-                <div class="grid-2">
-                    <div style="background:var(--card-inner); padding:16px; border-radius:8px; border:1px solid var(--border-color);">
-                        <h4 style="color:var(--gold); margin-bottom:10px;">➕ Add New Dish</h4>
-                        <input type="text" id="adm-dish-name" class="input-field" placeholder="Dish Name" style="margin-bottom:8px;">
-                        <input type="number" id="adm-dish-price" class="input-field" placeholder="Price in ₹" style="margin-bottom:8px;">
-                        <select id="adm-dish-cat" class="input-field" style="margin-bottom:8px;">
-                            <option value="Veg Snacks">Veg Snacks</option>
-                            <option value="Continental Pasta">Continental Pasta</option>
-                            <option value="Homestyle Comfort">Homestyle Comfort</option>
-                            <option value="Royal Non-Veg Specials">Royal Non-Veg Specials</option>
-                            <option value="Royal Egg Delights">Royal Egg Delights</option>
-                            <option value="Kheer Studio">Kheer Studio</option>
-                            <option value="Chutneys & Sides">Chutneys & Sides</option>
-                        </select>
-                        <select id="adm-dish-type" class="input-field" style="margin-bottom:8px;">
-                            <option value="Veg">🟢 Pure Veg</option>
-                            <option value="Egg">🟡 Egg</option>
-                            <option value="Non-Veg">🔴 Non-Veg</option>
-                        </select>
-                        <input type="text" id="adm-dish-desc" class="input-field" placeholder="Description" style="margin-bottom:10px;">
-                        <button class="btn" style="width:100%;" onclick="adminAddDish()">+ Add Dish</button>
-                    </div>
-
-                    <div style="background:var(--card-inner); padding:16px; border-radius:8px; border:1px solid var(--border-color);">
-                        <h4 style="color:var(--gold); margin-bottom:10px;">🔑 Security IDs & WhatsApp</h4>
-                        <label style="font-size:12px; color:var(--text-muted);">Owner WhatsApp:</label>
-                        <input type="tel" id="adm-whatsapp-num" class="input-field" value="8269083404" style="margin-bottom:10px;">
-                        <div style="font-size:12px; color:var(--text-muted); line-height:1.7; background:#141414; padding:10px; border-radius:6px;">
-                            <div>• Admin ID: <code style="color:var(--gold)">ADMIN001</code> (Pass: Paras@123)</div>
-                            <div>• Delivery ID: <code style="color:var(--gold)">DELIV01</code> (Pass: Delivery@123)</div>
-                            <div>• UPI: <code style="color:var(--green)">8269083404-2@ybl</code></div>
-                        </div>
-                        <button class="btn btn-sm" style="margin-top:10px; width:100%;" onclick="saveAdminWhatsApp()">💾 Save</button>
-                    </div>
-                </div>
-
-                <div style="margin-top:20px;">
-                    <h4 style="color:var(--gold-light); margin-bottom:10px;">📋 Manage Menu Dishes</h4>
-                    <div id="admin-menu-manage-list" style="max-height:220px; overflow-y:auto; background:var(--card-inner); padding:10px; border-radius:8px;"></div>
-                </div>
-
-                <div style="margin-top:20px;">
-                    <h4 style="color:var(--gold-light); margin-bottom:10px;">🔔 Customer Orders & Status</h4>
-                    <div id="admin-orders-list"></div>
-                </div>
-            </div>
-        </section>
+  <header>
+    <div class="logo-area">
+      <div>
+        <span class="logo-title brand-font">THE CRAFTED PLATE</span>
+        <span class="logo-sub">Royal Cloud Kitchen • Dark Edition</span>
+      </div>
     </div>
+    <div class="nav-actions">
+      <span id="userStatusBadge" style="font-size:0.8rem; color:var(--gold-light);">Guest Mode (No Login Required)</span>
+      <button class="btn-outline" onclick="openModal('referralModal')">🎁 Share & Earn 25%</button>
+      <button class="btn-outline" id="loginNavBtn" onclick="openModal('loginModal')">🔐 VIP / Admin Login</button>
+      <button class="btn-gold" id="adminPanelBtn" style="display:none;" onclick="openModal('adminModal')">⚙️ Admin Control</button>
+      <button class="btn-outline" id="logoutNavBtn" style="display:none; border-color:#e74c3c; color:#e74c3c;" onclick="logoutUser()">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="hero-banner">
+      <h1>Exquisite Flavors, Crafted Loyally</h1>
+      <p>बिना किसी लॉगिन की झंझट के सीधा ऑर्डर करें। पहले रेफरल ऑर्डर पर 25% छूट, दूसरे पर 15%, तीसरे पर 10% और 10 ऑर्डर पूरे करने पर एक्सक्लूसिव Free Spa / Haircut वाउचर!</p>
+      <div id="activeReferralBanner" style="display:none; background:rgba(46,204,113,0.15); border:1px solid #2ecc71; color:#2ecc71; padding:8px 14px; border-radius:8px; font-size:0.85rem; margin-top:10px;"></div>
+    </div>
+
+    <!-- Milestone & Partner Collaboration Offers (Spa / Haircut / Massage) -->
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+      <h2 class="section-title">✨ Exclusive Collaboration & Milestone Rewards</h2>
+      <span id="customerOrderCountBadge" style="font-size:0.85rem; color:var(--gold-light); background:#1f1f1f; padding:5px 12px; border-radius:20px; border:1px solid var(--border-gold);">Your Completed Orders: 0 / 10</span>
+    </div>
+    <div class="offers-grid" id="partnerOffersGrid"></div>
+        <!-- Smart Recommended Top Picks (Behavior Tracked) -->
+    <div id="smartRecommendedSection" style="display:none; margin-bottom: 30px;">
+      <h2 class="section-title">🔥 Top Picks For You (Flat 15% Behavior Discount Applied)</h2>
+      <div class="menu-grid" id="smartRecommendedGrid"></div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <h2 class="section-title">🍽️ Our Signature Royal Menu</h2>
+    <div class="search-bar-wrap">
+      <input type="text" id="menuSearchInput" class="search-input" placeholder="🔍 अपनी पसंदीदा डिश सर्च करें (जैसे: Veg Biryani, Pasta, Burger, Sandwich)..." oninput="handleSearchInput(this.value)">
+    </div>
+
+    <!-- Main Menu Grid -->
+    <div class="menu-grid" id="mainMenuGrid"></div>
+  </div>
+
+  <!-- Permanent Floating Install Web App Button (Bottom Left) -->
+  <button class="install-float-btn" id="installAppBtn" onclick="triggerInstallApp()">
+    📲 Install App
+  </button>
+
+  <!-- Floating Quick Cart Button (Bottom Right) -->
+  <button class="cart-float-btn" onclick="openCheckoutModal()">
+    🛒 Order Now (<span id="cartCount">0</span>) • ₹<span id="cartTotalQuick">0</span>
+  </button>
+    <!-- Checkout & Zero-Login Order Modal -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('checkoutModal')">&times;</button>
+      <h3 style="color:var(--gold-primary); margin-bottom:12px;">⚡ Super-Fast Zero-Login Checkout</h3>
+      <div id="cartItemsList" style="margin-bottom:15px; max-height:180px; overflow-y:auto; border-bottom:1px solid var(--border-gold); padding-bottom:10px;"></div>
+
+      <div id="billSummaryBox" style="background:#1a1a1a; padding:12px; border-radius:8px; margin-bottom:15px; font-size:0.85rem;"></div>
+
+      <div class="input-group">
+        <label>आपका नाम (Full Name) *</label>
+        <input type="text" id="custName" placeholder="अपना नाम लिखें" required>
+      </div>
+      <div class="input-group">
+        <label>मोबाइल नंबर (Phone Number - ज़रूरी है) *</label>
+        <input type="tel" id="custPhone" placeholder="10-digit मोबाइल नंबर" maxlength="10" oninput="updateMilestoneByPhone(this.value)" required>
+      </div>
+      <div class="input-group">
+        <label>पूरा पता (House/Flat/Landmark) *</label>
+        <textarea id="custAddress" rows="2" placeholder="मकान नंबर, गली, लैंडमार्क..."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label>Google Maps Live Location (ज़रूरी) *</label>
+        <button type="button" class="btn-gold" style="width:100%; padding:10px;" onclick="detectCustomerLocation()">
+          📍 Detect My Location (Google Maps GPS)
+        </button>
+        <input type="text" id="custGpsLink" placeholder="GPS लिंक यहाँ अपने आप आ जाएगा..." readonly style="margin-top:6px; font-size:0.8rem; color:#2ecc71;">
+        <div class="privacy-note">
+          🔒 <strong>Privacy Note:</strong> हम आपकी लोकेशन तब तक यूज़ करेंगे और वेबसाइट को तब तक परमिशन मिलेगी जब तक फूड डिलीवर नहीं हो जाता। उसके बाद हम आपकी लोकेशन का यूज़ नहीं करेंगे।
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>🎁 Select Unlocked Partner Voucher (Optional)</label>
+        <select id="selectedPartnerVoucher">
+          <option value="">-- कोई एक्स्ट्रा पार्टनर वाउचर नहीं --</option>
+        </select>
+      </div>
+
+      <button class="btn-gold" style="width:100%; padding:12px; font-size:1rem; margin-top:8px;" onclick="submitFinalOrder()">
+        ✅ Confirm & Send Order on WhatsApp
+      </button>
+    </div>
+  </div>
+    <!-- Permanent VIP Member & Admin Login Modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
+      <h3 style="color:var(--gold-primary); margin-bottom:10px;">🔐 Permanent Secure Login</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">एक बार लॉगिन करने पर आपका आईडी-पासवर्ड आपके फोन में हमेशा के लिए सेव रहेगा। बार-बार लॉगिन की ज़रूरत नहीं पड़ेगी।</p>
+      <div class="input-group">
+        <label>Member ID या Admin ID</label>
+        <input type="text" id="loginIdInput" placeholder="e.g. ADMIN001 या TCP101">
+      </div>
+      <div class="input-group">
+        <label>Password (सिर्फ Admin के लिए, Member खाली छोड़ सकते हैं या पिन डालें)</label>
+        <input type="password" id="loginPassInput" placeholder="Password (Admin: Paras@123)">
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px; font-size:0.82rem; color:var(--gold-light);">
+        <input type="checkbox" id="rememberMeCheck" checked style="width:auto;">
+        <label for="rememberMeCheck">हमेशा के लिए मेरे फोन और ब्राउज़र में लॉगिन सेव रखें</label>
+      </div>
+      <button class="btn-gold" style="width:100%; padding:10px;" onclick="handlePermanentLogin()">Save & Login Forever</button>
+    </div>
+  </div>
+
+  <!-- Forced 15% Behavior Discount Popup Modal -->
+  <div class="modal-overlay" id="behaviorOfferModal">
+    <div class="modal-box" style="text-align:center; border:2px solid var(--gold-primary);">
+      <button class="close-btn" onclick="closeModal('behaviorOfferModal')">&times;</button>
+      <span class="offer-badge">⚡ SPECIAL FLASH DEAL FOR YOU</span>
+      <h3 id="popupDishTitle" style="color:var(--gold-primary); margin:10px 0;"></h3>
+      <img id="popupDishImg" src="" alt="Dish" style="width:100%; height:170px; object-fit:cover; border-radius:8px; margin-bottom:10px;">
+      <p style="font-size:0.88rem; color:var(--text-main); margin-bottom:12px;">
+        हमने देखा आप इस डिश को पसंद कर रहे हैं! अभी ऑर्डर करने पर सीधे <strong>15% FLAT DISCOUNT</strong> पाएं!
+      </p>
+      <button class="btn-gold" id="popupClaimBtn" style="width:100%; padding:12px; font-size:0.95rem;">🔥 Claim 15% Off & Add to Cart</button>
+    </div>
+  </div>
+
+  <!-- Referral Share & Earn Modal -->
+  <div class="modal-overlay" id="referralModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('referralModal')">&times;</button>
+      <h3 style="color:var(--gold-primary); margin-bottom:10px;">🤝 Refer & Get Mutual Discounts!</h3>
+      <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
+        अपना यूनिक रेफरल लिंक दोस्तों को भेजें। नए कस्टमर को <strong>1st ऑर्डर पर 25%</strong>, <strong>2nd पर 15%</strong>, <strong>3rd पर 10%</strong> छूट मिलेगी, और आपको भी सेम <strong>25% रेफरल बोनस</strong> मिलेगा!
+      </p>
+      <div class="input-group">
+        <label>अपना नाम या मोबाइल नंबर डालें:</label>
+        <input type="text" id="refCreatorInput" placeholder="e.g. PARAS99 या 9876543210">
+      </div>
+      <button class="btn-outline" style="width:100%; margin-bottom:12px;" onclick="generateUniqueReferralLink()">🔗 मेरा स्पेशल लिंक बनाएं</button>
+      <div class="input-group">
+        <label>आपका शेयरिंग लिंक:</label>
+        <input type="text" id="generatedRefLink" readonly placeholder="यहाँ लिंक बनेगा...">
+      </div>
+      <button class="btn-gold" style="width:100%;" onclick="copyAndShareReferral()">📲 Copy & Share on WhatsApp</button>
+    </div>
+  </div>
+  <!-- Admin Control Modal: Create Custom Spa, Massage, Haircut Offers -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('adminModal')">&times;</button>
+      <h3 style="color:var(--gold-primary); margin-bottom:10px;">👑 Admin Collaboration & Offer Studio</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+        यहाँ से आप किसी भी Spa, Salon या Massage पार्टनर के साथ कोलैबोरेट करके कस्टम ऑफर (जैसे 10 ऑर्डर पर Free Haircut या Free Spa) लाइव जोड़ सकते हैं।
+      </p>
+
+      <div class="input-group">
+        <label>ऑफर का नाम (Offer Title) *</label>
+        <input type="text" id="adminOfferTitle" placeholder="e.g. Free Luxury Haircut या 30-Min Foot Spa Free">
+      </div>
+      <div class="input-group">
+        <label>पार्टनर/सैलून का नाम (Partner Brand) *</label>
+        <input type="text" id="adminPartnerName" placeholder="e.g. Royal Glow Spa & Salon">
+      </div>
+      <div class="input-group">
+        <label>कितने ऑर्डर पूरे होने पर अनलॉक होगा? (Required Orders)</label>
+        <input type="number" id="adminOrdersReq" value="10" min="1">
+      </div>
+      <div class="input-group">
+        <label>ऑफर की डिटेल (Short Description)</label>
+        <input type="text" id="adminOfferDesc" placeholder="e.g. 10 ऑर्डर पूरे करते ही पाएँ बिल्कुल फ्री हेयरकट अपॉइंटमेंट!">
+      </div>
+      <button class="btn-gold" style="width:100%; margin-bottom:16px;" onclick="addCustomCollaborationOffer()">➕ Publish New Collaboration Offer</button>
+
+      <h4 style="color:var(--gold-light); font-size:0.9rem; margin-bottom:8px;">Active Collaboration Offers:</h4>
+      <div id="adminOffersList" style="max-height:160px; overflow-y:auto; font-size:0.8rem;"></div>
+    </div>
+  </div>
+        <hr style="border:0; border-top:1px solid var(--border-gold); margin:18px 0;">
+
+      <h3 style="color:var(--gold-primary); margin-bottom:8px;">🎡 Admin Spin Wheel Prize Controller</h3>
+      <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px;">
+        यहाँ से तय करें कि स्पिन व्हील में कस्टमर को रियल में क्या-क्या इनाम मिलेंगे:
+      </p>
+
+      <div class="input-group">
+        <label>स्पिन इनाम का नाम (Real Prize Title) *</label>
+        <input type="text" id="adminSpinLabel" placeholder="e.g. FREE Extra Street Garlic Chutney या ₹30 Instant Off">
+      </div>
+      <div class="input-group">
+        <label>इनाम का प्रकार (Prize Type)</label>
+        <select id="adminSpinType">
+          <option value="FREE_ITEM">🎁 Free Food Item / Dip / Dessert (₹0 Bill Cut, Real Gift)</option>
+          <option value="CASH_OFF">💸 Real Cash Discount (सीधे बिल से पैसे कम होंगे)</option>
+          <option value="BONUS_ORDER">💇‍♂️ Bonus Order Count (Free Haircut/Spa के लिए +1 या +2 पॉइंट)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>वैल्यू (अगर Cash Off है तो ₹ लिखें, अगर Bonus Order है तो 1 या 2 लिखें, Free Item पर 0 छोड़ें)</label>
+        <input type="number" id="adminSpinValue" value="0" min="0">
+      </div>
+      <div class="input-group">
+        <label>कम से कम कितने के ऑर्डर पर लागू होगा? (Min Order ₹)</label>
+        <input type="number" id="adminSpinMinOrder" value="199" min="0">
+      </div>
+      <button class="btn-gold" style="width:100%; margin-bottom:14px;" onclick="addCustomSpinPrize()">➕ Add Prize to Spin Wheel</button>
+
+      <h4 style="color:var(--gold-light); font-size:0.88rem; margin-bottom:6px;">Active Spin Wheel Prizes:</h4>
+      <div id="adminSpinPrizesList" style="max-height:150px; overflow-y:auto; font-size:0.8rem;"></div>
         <script>
-        const DEFAULT_GOOGLE_SHEET_URL = "";
-        const DEFAULT_MENU = [
-            { id: 1, name: "Thick Hakka Noodles", price: 180, cat: "Veg Snacks", type: "Veg", desc: "Wok-tossed thick Hakka noodles with crunchy garden vegetables." },
-            { id: 2, name: "Tawa Veg Mayo Sandwich with Boiled Potatoes", price: 140, cat: "Veg Snacks", type: "Veg", desc: "Crispy tawa sandwich with creamy veg mayo & potatoes." },
-            { id: 3, name: "Momos with Spicy Tomato Chutney", price: 150, cat: "Veg Snacks", type: "Veg", desc: "Steamed momos with fiery homemade chutney." },
-            { id: 4, name: "Crispy Honey Chilli Potato", price: 170, cat: "Veg Snacks", type: "Veg", desc: "Crispy potato fingers in honey chilli glaze." },
-            { id: 5, name: "Creamy Alfredo White Sauce Pasta", price: 220, cat: "Continental Pasta", type: "Veg", desc: "Rich cheesy penne pasta with herbs & olives." },
-            { id: 6, name: "Arrabbiata Spicy Red Sauce Pasta", price: 210, cat: "Continental Pasta", type: "Veg", desc: "Tangy tomato garlic herb sauce." },
-            { id: 7, name: "One-Pot Pressure Cooker Veg Biryani", price: 240, cat: "Homestyle Comfort", type: "Veg", desc: "Aromatic basmati rice with fresh vegetables." },
-            { id: 8, name: "Royal Homestyle Dal Tadka & Jeera Rice Bowl", price: 190, cat: "Homestyle Comfort", type: "Veg", desc: "Desi ghee tempered yellow dal with rice." },
-            { id: 9, name: "Royal Masala Egg Curry (2 Eggs)", price: 180, cat: "Royal Egg Delights", type: "Egg", desc: "Boiled eggs in spicy homestyle gravy." },
-            { id: 10, name: "Mumbai Style Double Egg Bhurji", price: 150, cat: "Royal Egg Delights", type: "Egg", desc: "Street-style spiced scrambled eggs." },
-            { id: 11, name: "Royal Handi Chicken Curry", price: 320, cat: "Royal Non-Veg Specials", type: "Non-Veg", desc: "Tender chicken slow-cooked in thick gravy." },
-            { id: 12, name: "Hyderabadi Dum Chicken Biryani", price: 290, cat: "Royal Non-Veg Specials", type: "Non-Veg", desc: "Layered spiced chicken dum biryani." },
-            { id: 13, name: "Royal Kesariya Dry-Fruit Rice Kheer", price: 130, cat: "Kheer Studio", type: "Veg", desc: "Saffron and dry-fruit milk kheer." },
-            { id: 14, name: "Caramel Badam Shahi Kheer", price: 150, cat: "Kheer Studio", type: "Veg", desc: "Caramelized milk pudding with roasted almonds." },
-            { id: 15, name: "Special Raw Chilli Chutney", price: 60, cat: "Chutneys & Sides", type: "Veg", desc: "Fresh ground green chilli garlic dip." },
-            { id: 16, name: "Homemade Fiery Schezwan Chutney", price: 80, cat: "Chutneys & Sides", type: "Veg", desc: "Authentic spicy Schezwan dip." }
-        ];
+    // 1. Original "The Crafted Plate" Signature Menu with AI/Curated High-Res Food Visuals
+    const defaultMenuData = [
+      {
+        id: 'dish_1',
+        name: 'Pressure Cooker Veg Biryani + Street Garlic Tomato Chutney',
+        desc: 'खुशबूदार देसी बासमती वेज बिरयानी, तीखी स्ट्रीट-स्टाइल लहसुन-टमाटर की स्पेशल चटनी के साथ।',
+        price: 220,
+        img: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'dish_2',
+        name: 'Creamy Italian White Sauce Pasta',
+        desc: 'रिच चीज़ी व्हाइट बेक्ड सॉस, स्वीट कॉर्न, शिमला मिर्च और इटैलियन हर्ब्स से भरपूर।',
+        price: 190,
+        img: 'https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'dish_3',
+        name: 'Crispy Tawa Mayo Grilled Sandwich',
+        desc: 'मक्खन में क्रिस्पी सेका हुआ तवा मेयो सैंडविच, ताज़ा सब्जियों और सीक्रेट मसालों के साथ।',
+        price: 130,
+        img: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'dish_4',
+        name: 'Charcoal Roasted Gourmet Burger',
+        desc: 'स्मोकी रोस्टेड पैटी, डबल मेल्टेड चीज़ और कैरेमलाइज्ड अनियन वाला रॉयल बर्गर।',
+        price: 160,
+        img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'dish_5',
+        name: 'Royal Paneer Tikka Platter & Mint Dip',
+        desc: 'तंदूरी मसालों में मैरीनेट किया हुआ सॉफ्ट पनीर टिक्का और पुदीना चटनी।',
+        price: 260,
+        img: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=700&q=80'
+      },
+      {
+        id: 'dish_6',
+        name: 'Dark Chocolate Hazelnut Lava Cake',
+        desc: 'गर्म चॉकलेट लावा केक, प्रीमियम कोको और रोस्टेड हेज़लनट टॉपिंग के साथ।',
+        price: 140,
+        img: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=700&q=80'
+      }
+    ];
 
-        let googleSheetURL = localStorage.getItem('tcp_sheet_url') || DEFAULT_GOOGLE_SHEET_URL;
-        let menuItems = JSON.parse(localStorage.getItem('tcp_menu')) || DEFAULT_MENU;
-        let ordersList = JSON.parse(localStorage.getItem('tcp_orders')) || [];
-        let membersList = JSON.parse(localStorage.getItem('tcp_members')) || [
-            { id: "TCP456789", date: new Date().toLocaleDateString(), name: "Amar Sharma", phone: "9876543210", utr: "PREAPPROVED", valid: "11/2027" }
-        ];
-        let deliveryPartner = JSON.parse(localStorage.getItem('tcp_driver')) || { name: "Rahul Kumar", phone: "8269083404", mapLink: "https://maps.google.com" };
-        let ownerWhatsApp = localStorage.getItem('tcp_owner_wa') || "8269083404";
+    // 2. Default Partner Collaboration Offers (Spa, Massage, Haircut)
+    const defaultPartnerOffers = [
+      {
+        id: 'collab_1',
+        title: '💇‍♂️ FREE Luxury Haircut Appointment',
+        partner: 'Partner Men & Unisex Salon',
+        ordersRequired: 10,
+        desc: '10 ऑर्डर पूरे करने पर हमारे पार्टनर सैलून में 1 प्रीमियम हेयरकट बिल्कुल FREE!'
+      },
+      {
+        id: 'collab_2',
+        title: '💆‍♂️ FREE 30-Min Head & Shoulder Spa / Massage',
+        partner: 'Aura Wellness & Spa Partner',
+        ordersRequired: 5,
+        desc: '5 ऑर्डर पूरे करने पर पाएँ फ्री रिलैक्सिंग स्पा और मसाज सेशन का कन्फर्म अपॉइंटमेंट वाउचर!'
+      },
+      {
+        id: 'collab_3',
+        title: '✨ 40% OFF Instant Spa & Grooming Coupon',
+        partner: 'All Collaborated Salons & Spas',
+        ordersRequired: 1,
+        desc: 'पहले ही ऑर्डर के साथ हमारे पार्टनर स्पा और सैलून पर 40% की सीधी छूट!'
+      }
+    ];
 
-        let cart = [];
-        let selectedCategory = "All";
-        let currentRole = "public";
-        let activeMemberData = null;
-        let customBargainPrice = null;
+    let cart = [];
+    let behaviorScores = JSON.parse(localStorage.getItem('tcp_behavior_scores') || '{}');
+    let forcedDiscounts = JSON.parse(localStorage.getItem('tcp_forced_discounts') || '{}');
+    let partnerOffers = JSON.parse(localStorage.getItem('tcp_partner_offers') || JSON.stringify(defaultPartnerOffers));
+    let deferredInstallPrompt = null;
+                // Initialize App on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      checkPermanentLoginSession();
+      captureIncomingReferralLink();
+      renderPartnerOffers();
+      renderMainMenu(defaultMenuData);
+      renderSmartRecommendations();
+      autofillSavedCustomerInfo();
+    });
 
-        function saveAllData() {
-            localStorage.setItem('tcp_sheet_url', googleSheetURL);
-            localStorage.setItem('tcp_menu', JSON.stringify(menuItems));
-            localStorage.setItem('tcp_orders', JSON.stringify(ordersList));
-            localStorage.setItem('tcp_members', JSON.stringify(membersList));
-            localStorage.setItem('tcp_driver', JSON.stringify(deliveryPartner));
-            localStorage.setItem('tcp_owner_wa', ownerWhatsApp);
-            updateRevenueAnalytics();
+    // 1. PERMANENT LOGIN ("Remember Me" Forever for Admin & VIP Members)
+    function handlePermanentLogin() {
+      const id = document.getElementById('loginIdInput').value.trim().toUpperCase();
+      const pass = document.getElementById('loginPassInput').value.trim();
+      if (!id) { alert('कृपया अपनी ID डालें!'); return; }
+
+      if (id === 'ADMIN001') {
+        if (pass !== 'Paras@123') {
+          alert('गलत एडमिन पासवर्ड!');
+          return;
         }
+        const sessionObj = { role: 'ADMIN', id: 'ADMIN001', savedAt: Date.now() };
+        localStorage.setItem('tcp_permanent_session', JSON.stringify(sessionObj));
+        alert('👑 Welcome Admin Paras! आपका लॉगिन हमेशा के लिए इस फोन में सेव हो गया है।');
+      } else {
+        const sessionObj = { role: 'MEMBER', id: id, savedAt: Date.now() };
+        localStorage.setItem('tcp_permanent_session', JSON.stringify(sessionObj));
+        alert('✅ VIP Member Login Saved Forever! अब आपको दोबारा लॉगिन नहीं करना पड़ेगा।');
+      }
+      closeModal('loginModal');
+      checkPermanentLoginSession();
+    }
 
-        async function pushToGoogleSheet(payload) {
-            if (!googleSheetURL) return;
-            try {
-                document.getElementById('cloud-sync-indicator').innerText = "☁️ Saving to Sheet...";
-                await fetch(googleSheetURL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload) });
-                document.getElementById('cloud-sync-indicator').innerText = "☁️ Saved ✔";
-            } catch (e) { console.error(e); }
+    function checkPermanentLoginSession() {
+      const saved = localStorage.getItem('tcp_permanent_session');
+      const badge = document.getElementById('userStatusBadge');
+      const loginBtn = document.getElementById('loginNavBtn');
+      const logoutBtn = document.getElementById('logoutNavBtn');
+      const adminBtn = document.getElementById('adminPanelBtn');
+
+      if (saved) {
+        const session = JSON.parse(saved);
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        if (session.role === 'ADMIN') {
+          badge.innerHTML = '👑 Logged In: <strong>ADMIN (Paras)</strong> [Saved Forever]';
+          adminBtn.style.display = 'inline-block';
+        } else {
+          badge.innerHTML = '💎 VIP Member: <strong>' + session.id + '</strong> [Saved Forever]';
+          adminBtn.style.display = 'none';
         }
+      } else {
+        badge.innerText = 'Guest Mode (Zero-Login Ordering)';
+        loginBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+        adminBtn.style.display = 'none';
+      }
+    }
 
-        async function syncFromGoogleSheet() {
-            if (!googleSheetURL) return;
-            try {
-                document.getElementById('cloud-sync-indicator').innerText = "☁️ Fetching...";
-                const res = await fetch(googleSheetURL + "?action=getAll");
-                const data = await res.json();
-                if (data.orders && data.orders.length > 0) {
-                    ordersList = data.orders.map(o => ({ ...o, menuTotal: Number(o.menuTotal) || 0, finalPrice: Number(o.finalPrice) || 0, statusStep: Number(o.statusStep) || 1 }));
-                }
-                if (data.members && data.members.length > 0) membersList = data.members;
-                if (data.menu && data.menu.length > 0) menuItems = data.menu.map(m => ({ ...m, id: Number(m.id), price: Number(m.price) }));
-                saveAllData(); renderMenu(); renderLiveTracker(); renderDeliveryDashboard(); renderAdminDashboard();
-                document.getElementById('cloud-sync-indicator').innerText = "☁️ Synced ✔";
-            } catch (err) { document.getElementById('cloud-sync-indicator').innerText = "☁️ Offline Backup"; }
-        }
+    function logoutUser() {
+      if (confirm('क्या आप वाकई लॉगआउट करना चाहते हैं?')) {
+        localStorage.removeItem('tcp_permanent_session');
+        checkPermanentLoginSession();
+      }
+    }
 
-        function updateRevenueAnalytics() {
-            const todayStr = new Date().toLocaleDateString();
-            const foodTotal = ordersList.reduce((sum, o) => sum + (Number(o.finalPrice) || 0), 0);
-            const todayFood = ordersList.filter(o => o.date === todayStr).reduce((sum, o) => sum + (Number(o.finalPrice) || 0), 0);
-            const memRevenue = membersList.filter(m => m.utr !== "PREAPPROVED").length * 399;
-            const overallRev = foodTotal + memRevenue;
-            const completedCount = ordersList.filter(o => Number(o.statusStep) === 4).length;
+    // 2. BEHAVIOR TRACKING & FORCED 15% DISCOUNT POPUP
+    function trackDishInteraction(dishId) {
+      behaviorScores[dishId] = (behaviorScores[dishId] || 0) + 1;
+      localStorage.setItem('tcp_behavior_scores', JSON.stringify(behaviorScores));
 
-            document.getElementById('stat-total-rev').innerText = `₹${overallRev}`;
-            document.getElementById('stat-today-rev').innerText = `₹${todayFood}`;
-            document.getElementById('stat-mem-rev').innerText = `₹${memRevenue}`;
-            document.getElementById('stat-orders-count').innerText = `${completedCount} / ${ordersList.length}`;
-        }
+      const dish = defaultMenuData.find(d => d.id === dishId);
+      if (dish && behaviorScores[dishId] >= 2 && !forcedDiscounts[dishId]) {
+        forcedDiscounts[dishId] = true;
+        localStorage.setItem('tcp_forced_discounts', JSON.stringify(forcedDiscounts));
+        triggerForcedPopup(dish);
+      }
+      renderSmartRecommendations();
+    }
 
-        function exportOrdersCSV() {
-            if (ordersList.length === 0) { alert("No orders!"); return; }
-            let csv = "ID,Date,Time,Name,Phone,Address,Items,MenuPrice,FinalPrice,PayMode,Step\n";
-            ordersList.forEach(o => { csv += `"${o.id}","${o.date || ''}","${o.time}","${o.customerName}","${o.customerPhone}","${o.address}","${o.itemsText}",${o.menuTotal},${o.finalPrice},"${o.payMode}",${o.statusStep}\n`; });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Revenue_Report.csv`; a.click();
-        }
+    function triggerForcedPopup(dish) {
+      document.getElementById('popupDishTitle').innerText = dish.name;
+      document.getElementById('popupDishImg').src = dish.img;
+      const btn = document.getElementById('popupClaimBtn');
+      btn.onclick = function() {
+        addToCart(dish.id, true);
+        closeModal('behaviorOfferModal');
+      };
+      openModal('behaviorOfferModal');
+    }
 
-        function updateRoleNavigation() {
-            const badge = document.getElementById('active-role-badge');
-            const memNote = document.getElementById('member-discount-note');
-            const btnMenu = document.getElementById('nav-menu-btn'), btnMem = document.getElementById('nav-member-btn'), btnAdm = document.getElementById('nav-admin-btn'), btnDel = document.getElementById('nav-delivery-btn'), btnLog = document.getElementById('nav-login-btn'), btnOut = document.getElementById('nav-logout-btn');
-
-            btnMenu.style.display = 'none'; btnMem.style.display = 'none'; btnAdm.style.display = 'none'; btnDel.style.display = 'none'; btnLog.style.display = 'none'; btnOut.style.display = 'none'; memNote.style.display = 'none';
-
-            if (currentRole === 'public') { badge.innerText = "Public Guest"; btnMenu.style.display = 'inline-flex'; btnMem.style.display = 'inline-flex'; btnLog.style.display = 'inline-flex'; }
-            else if (currentRole === 'member') { badge.innerText = `👑 VIP Member (${activeMemberData.name})`; memNote.style.display = 'inline'; btnMenu.style.display = 'inline-flex'; btnMem.style.display = 'inline-flex'; btnOut.style.display = 'inline-flex'; }
-            else if (currentRole === 'delivery') { badge.innerText = "🛵 Delivery Partner"; btnDel.style.display = 'inline-flex'; btnOut.style.display = 'inline-flex'; openPanel('delivery-panel'); }
-            else if (currentRole === 'admin') { badge.innerText = "👑 Admin"; btnMenu.style.display = 'inline-flex'; btnMem.style.display = 'inline-flex'; btnAdm.style.display = 'inline-flex'; btnDel.style.display = 'inline-flex'; btnOut.style.display = 'inline-flex'; }
-
-            renderMenu(); renderCart(); renderDeliveryDashboard(); renderAdminDashboard(); updateRevenueAnalytics();
-        }
-
-        function openPanel(panelId) {
-            if (currentRole === 'delivery' && panelId !== 'delivery-panel') panelId = 'delivery-panel';
-            if (panelId === 'admin-panel' && currentRole !== 'admin') return;
-            if (panelId === 'delivery-panel' && currentRole !== 'delivery' && currentRole !== 'admin') return;
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById(panelId).classList.add('active');
-        }
-
-        /* SECURE LOGIN FUNCTION WITH PASSWORD VALIDATION & NO PUBLIC HINTS */
-        function processRoleLogin() {
-            const rawId = document.getElementById('role-login-input').value.trim().toUpperCase();
-            const password = document.getElementById('role-password-input').value.trim();
-
-            if (!rawId || !password) { 
-                alert("Kripya ID aur Password dono darj karein!"); 
-                return; 
+    function handleSearchInput(query) {
+      const q = query.trim().toLowerCase();
+      const filtered = defaultMenuData.filter(d => d.name.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q));
+      if (q.length >= 3 && filtered.length > 0) {
+        trackDishInteraction(filtered[0].id);
+      }
+      renderMainMenu(filtered);
             }
+                function renderMainMenu(list) {
+      const grid = document.getElementById('mainMenuGrid');
+      grid.innerHTML = list.map(dish => {
+        const hasBehaviorDiscount = forcedDiscounts[dish.id];
+        const finalPrice = hasBehaviorDiscount ? Math.round(dish.price * 0.85) : dish.price;
+        return `
+          <div class="dish-card" onclick="trackDishInteraction('${dish.id}')">
+            <img src="${dish.img}" alt="${dish.name}" class="dish-img">
+            <div class="dish-body">
+              <div>
+                ${hasBehaviorDiscount ? '<span class="offer-badge">🔥 15% YOUR TOP PICK OFF</span>' : ''}
+                <div class="dish-title">${dish.name}</div>
+                <div class="dish-desc">${dish.desc}</div>
+              </div>
+              <div class="dish-footer">
+                <div class="dish-price">
+                  ${hasBehaviorDiscount ? `<del style="color:#888; font-size:0.85rem;">₹${dish.price}</del> ₹${finalPrice}` : `₹${dish.price}`}
+                </div>
+                <button class="btn-gold" onclick="event.stopPropagation(); addToCart('${dish.id}', ${hasBehaviorDiscount ? 'true' : 'false'})">+ Add</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
 
-            if (rawId === "ADMIN001" && password === "Paras@123") {
-                currentRole = 'admin';
-                alert("Welcome Owner Admin! Full Access Unlocked.");
-                updateRoleNavigation(); 
-                openPanel('admin-panel');
-            } 
-            else if (rawId === "DELIV01" && password === "Delivery@123") {
-                currentRole = 'delivery';
-                alert("Welcome Delivery Partner!");
-                updateRoleNavigation(); 
-                openPanel('delivery-panel');
-            } 
-            else if (rawId.startsWith("TCP")) {
-                let found = membersList.find(m => String(m.id).toUpperCase() === rawId);
-                if (found) {
-                    currentRole = 'member'; 
-                    activeMemberData = found; 
-                    populateDigitalCard(found); 
-                    alert(`Welcome back, ${found.name}!`);
-                    updateRoleNavigation(); 
-                    openPanel('customer-panel');
-                } else {
-                    alert("Invalid Membership ID!");
-                }
-            } 
-            else {
-                alert("Galat ID ya Password! Access Denied.");
-            }
+    function renderSmartRecommendations() {
+      const sortedIds = Object.keys(behaviorScores).sort((a, b) => behaviorScores[b] - behaviorScores[a]);
+      const topDishes = sortedIds.map(id => defaultMenuData.find(d => d.id === id)).filter(Boolean).slice(0, 3);
+      const sec = document.getElementById('smartRecommendedSection');
+      const grid = document.getElementById('smartRecommendedGrid');
 
-            document.getElementById('role-login-input').value = '';
-            document.getElementById('role-password-input').value = '';
+      if (topDishes.length === 0) {
+        sec.style.display = 'none';
+        return;
+      }
+      sec.style.display = 'block';
+      grid.innerHTML = topDishes.map(dish => {
+        const discPrice = Math.round(dish.price * 0.85);
+        return `
+          <div class="dish-card" style="border-color:#2ecc71;">
+            <img src="${dish.img}" alt="${dish.name}" class="dish-img">
+            <div class="dish-body">
+              <div>
+                <span class="offer-badge" style="background:#2ecc71;">⚡ 15% SPECIAL FOR YOU</span>
+                <div class="dish-title">${dish.name}</div>
+              </div>
+              <div class="dish-footer">
+                <div class="dish-price"><del style="color:#888;font-size:0.8rem;">₹${dish.price}</del> ₹${discPrice}</div>
+                <button class="btn-gold" onclick="addToCart('${dish.id}', true)">Grab 15% Off</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 3. PARTNER COLLABORATION OFFERS (Spa, Massage, Haircut on 10 Orders)
+    function renderPartnerOffers() {
+      const grid = document.getElementById('partnerOffersGrid');
+      const select = document.getElementById('selectedPartnerVoucher');
+      const ordersDone = parseInt(localStorage.getItem('tcp_completed_orders_count') || '0', 10);
+      document.getElementById('customerOrderCountBadge').innerText = `Your Completed Orders: ${ordersDone} / 10`;
+
+      grid.innerHTML = partnerOffers.map(off => {
+        const unlocked = ordersDone >= off.ordersRequired;
+        return `
+          <div class="offer-card">
+            <span class="offer-badge">${unlocked ? '✅ UNLOCKED FOR YOU' : `🔒 Unlocks at ${off.ordersRequired} Orders`}</span>
+            <h4 style="color:var(--gold-light); margin-bottom:4px;">${off.title}</h4>
+            <p style="font-size:0.78rem; color:var(--gold-primary); margin-bottom:6px;">🤝 Partner: ${off.partner}</p>
+            <p style="font-size:0.8rem; color:var(--text-muted);">${off.desc}</p>
+          </div>
+        `;
+      }).join('');
+
+      select.innerHTML = '<option value="">-- कोई एक्स्ट्रा पार्टनर वाउचर नहीं --</option>' +
+        partnerOffers.map(off => {
+          const unlocked = ordersDone >= off.ordersRequired;
+          return `<option value="${off.title} (${off.partner})" ${!unlocked ? 'disabled' : ''}>
+            ${unlocked ? '🎁 ' : '🔒 [Need ' + off.ordersRequired + ' Orders] '} ${off.title} - ${off.partner}
+          </option>`;
+        }).join('');
+
+      const adminList = document.getElementById('adminOffersList');
+      if (adminList) {
+        adminList.innerHTML = partnerOffers.map((off, idx) => `
+          <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #333;">
+            <span><strong>${off.title}</strong> (${off.ordersRequired} Orders)</span>
+            <button onclick="deletePartnerOffer(${idx})" style="color:#e74c3c; background:none; border:none; cursor:pointer;">Delete</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    function addCustomCollaborationOffer() {
+      const title = document.getElementById('adminOfferTitle').value.trim();
+      const partner = document.getElementById('adminPartnerName').value.trim();
+      const req = parseInt(document.getElementById('adminOrdersReq').value || '10', 10);
+      const desc = document.getElementById('adminOfferDesc').value.trim();
+      if (!title || !partner) { alert('कृपया ऑफर और पार्टनर का नाम भरें!'); return; }
+
+      partnerOffers.unshift({ id: 'collab_' + Date.now(), title, partner, ordersRequired: req, desc });
+      localStorage.setItem('tcp_partner_offers', JSON.stringify(partnerOffers));
+      renderPartnerOffers();
+      alert('🎉 नया Spa/Salon/Haircut कोलैबोरेशन ऑफर लाइव हो गया!');
+    }
+
+    function deletePartnerOffer(index) {
+      partnerOffers.splice(index, 1);
+      localStorage.setItem('tcp_partner_offers', JSON.stringify(partnerOffers));
+      renderPartnerOffers();
+    }
+                // 4. REFERRAL LINK GENERATOR & MUTUAL REWARD TRACKER
+    function captureIncomingReferralLink() {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref) {
+        localStorage.setItem('tcp_referred_by', ref.toUpperCase());
+      }
+      const savedRef = localStorage.getItem('tcp_referred_by');
+      const banner = document.getElementById('activeReferralBanner');
+      if (savedRef) {
+        const count = parseInt(localStorage.getItem('tcp_completed_orders_count') || '0', 10);
+        const discText = count === 0 ? '25% OFF (1st Order)' : count === 1 ? '15% OFF (2nd Order)' : count === 2 ? '10% OFF (3rd Order)' : 'VIP Member Milestone';
+        banner.style.display = 'block';
+        banner.innerHTML = `🎉 Referral Applied (Code: <strong>${savedRef}</strong>)! आपको मिल रहा है: <strong>${discText}</strong> और आपके रेफरल दोस्त को भी 25% बोनस!`;
+      }
+    }
+
+    function generateUniqueReferralLink() {
+      const raw = document.getElementById('refCreatorInput').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (!raw) { alert('कृपया अपना नाम या नंबर लिखें!'); return; }
+      const code = 'TCP-' + raw.slice(0, 8);
+      localStorage.setItem('tcp_my_ref_code', code);
+      const link = window.location.origin + window.location.pathname + '?ref=' + code;
+      document.getElementById('generatedRefLink').value = link;
+    }
+
+    function copyAndShareReferral() {
+      const link = document.getElementById('generatedRefLink').value;
+      if (!link) { generateUniqueReferralLink(); }
+      const finalLink = document.getElementById('generatedRefLink').value;
+      navigator.clipboard.writeText(finalLink);
+      const msg = encodeURIComponent(`🍽️ *The Crafted Plate* से रॉयल खाना ऑर्डर करो! मेरे स्पेशल लिंक से तुम्हें पहले ऑर्डर पर *25% OFF*, दूसरे पर *15% OFF*, तीसरे पर *10% OFF* और दोनों को बोनस मिलेगा: ${finalLink}`);
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    }
+
+    // 5. CART, GOOGLE MAPS GPS & ZERO-LOGIN ORDERING
+    function addToCart(dishId, apply15Percent) {
+      const dish = defaultMenuData.find(d => d.id === dishId);
+      if (!dish) return;
+      const unitPrice = (apply15Percent || forcedDiscounts[dishId]) ? Math.round(dish.price * 0.85) : dish.price;
+      const existing = cart.find(i => i.id === dishId);
+      if (existing) { existing.qty += 1; existing.price = unitPrice; }
+      else { cart.push({ id: dish.id, name: dish.name, price: unitPrice, qty: 1 }); }
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const totalQty = cart.reduce((s, i) => s + i.qty, 0);
+      const subTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+      document.getElementById('cartCount').innerText = totalQty;
+      document.getElementById('cartTotalQuick').innerText = subTotal;
+    }
+
+    function openCheckoutModal() {
+      if (cart.length === 0) { alert('आपकी कार्ट खाली है! कृपया पहले कोई डिश चुनें।'); return; }
+      const listEl = document.getElementById('cartItemsList');
+      listEl.innerHTML = cart.map((item, idx) => `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.85rem;">
+          <span>${item.name} (x${item.qty})</span>
+          <div>
+            <span style="color:var(--gold-primary); font-weight:600; margin-right:8px;">₹${item.price * item.qty}</span>
+            <button onclick="removeFromCart(${idx})" style="background:#e74c3c; color:#fff; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">-</button>
+          </div>
+        </div>
+      `).join('');
+
+      const subTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+      const ordersDone = parseInt(localStorage.getItem('tcp_completed_orders_count') || '0', 10);
+      const hasRef = localStorage.getItem('tcp_referred_by');
+      let milestoneRate = 0;
+      let milestoneLabel = 'No Referral Milestone';
+
+      if (ordersDone === 0) { milestoneRate = 0.25; milestoneLabel = '1st Order Welcome/Referral Discount (25% OFF)'; }
+      else if (ordersDone === 1) { milestoneRate = 0.15; milestoneLabel = '2nd Order Loyalty Discount (15% OFF)'; }
+      else if (ordersDone === 2) { milestoneRate = 0.10; milestoneLabel = '3rd Order Loyalty Discount (10% OFF)'; }
+
+      const discAmount = Math.round(subTotal * milestoneRate);
+      const grandTotal = subTotal - discAmount;
+
+      document.getElementById('billSummaryBox').innerHTML = `
+        <div>Subtotal: <strong>₹${subTotal}</strong></div>
+        <div style="color:#2ecc71;">${milestoneLabel}: <strong>-₹${discAmount}</strong></div>
+        ${hasRef ? `<div style="color:var(--gold-light); font-size:0.78rem;">🔗 Referred By: ${hasRef} (Both Get 25% Credit!)</div>` : ''}
+        <div style="font-size:1.05rem; color:var(--gold-primary); margin-top:5px; border-top:1px solid #333; padding-top:5px;">
+          <strong>Final Payable: ₹${grandTotal}</strong>
+        </div>
+      `;
+      openModal('checkoutModal');
+    }
+
+    function removeFromCart(idx) {
+      if (cart[idx].qty > 1) cart[idx].qty -= 1;
+      else cart.splice(idx, 1);
+      updateCartUI();
+      if (cart.length === 0) closeModal('checkoutModal');
+      else openCheckoutModal();
+    }
+
+    function detectCustomerLocation() {
+      const gpsField = document.getElementById('custGpsLink');
+      if (!navigator.geolocation) {
+        alert('आपका ब्राउज़र GPS सपोर्ट नहीं करता!');
+        return;
+      }
+      gpsField.value = '⏳ Google Maps से सटीक लोकेशन ली जा रही है...';
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          gpsField.value = `https://www.google.com/maps?q=${lat},${lng}`;
+        },
+        () => {
+          gpsField.value = '';
+          alert('कृपया ब्राउज़र में Location Permission को Allow करें ताकि डिलीवरी सही समय पर हो सके!');
+        },
+        { enableHighAccuracy: true }
+      );
+    }
+
+    function autofillSavedCustomerInfo() {
+      document.getElementById('custName').value = localStorage.getItem('tcp_cust_name') || '';
+      document.getElementById('custPhone').value = localStorage.getItem('tcp_cust_phone') || '';
+      document.getElementById('custAddress').value = localStorage.getItem('tcp_cust_addr') || '';
+    }
+
+    function updateMilestoneByPhone(phone) {
+      if (phone.length === 10) {
+        renderPartnerOffers();
+      }
+    }
+
+    function submitFinalOrder() {
+      const name = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      const addr = document.getElementById('custAddress').value.trim();
+      const gps = document.getElementById('custGpsLink').value.trim();
+      const voucher = document.getElementById('selectedPartnerVoucher').value;
+
+      if (!name || phone.length < 10 || !addr) {
+        alert('कृपया अपना नाम, 10-अंकों का मोबाइल नंबर और पता ज़रूर भरें!');
+        return;
+      }
+      if (!gps || !gps.includes('google.com/maps')) {
+        alert('कृपया "Detect My Location (GPS)" बटन दबाकर अपनी Google Maps लोकेशन परमिशन Allow करें!');
+        return;
+      }
+
+      localStorage.setItem('tcp_cust_name', name);
+      localStorage.setItem('tcp_cust_phone', phone);
+      localStorage.setItem('tcp_cust_addr', addr);
+
+      const ordersDone = parseInt(localStorage.getItem('tcp_completed_orders_count') || '0', 10) + 1;
+      localStorage.setItem('tcp_completed_orders_count', ordersDone.toString());
+
+      const subTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+      const rate = ordersDone === 1 ? 0.25 : ordersDone === 2 ? 0.15 : ordersDone === 3 ? 0.10 : 0;
+      const finalPayable = subTotal - Math.round(subTotal * rate);
+      const refBy = localStorage.getItem('tcp_referred_by') || 'Direct';
+
+      const itemsText = cart.map(i => `• ${i.name} x${i.qty} = ₹${i.price * i.qty}`).join('%0A');
+      const waMessage = `*👑 NEW ORDER - THE CRAFTED PLATE*%0A` +
+        `--------------------------------%0A` +
+        `👤 *Customer:* ${name}%0A` +
+        `📞 *Phone:* ${phone}%0A` +
+        `🏠 *Address:* ${addr}%0A` +
+        `📍 *Google Maps Live GPS:* ${gps}%0A` +
+        `--------------------------------%0A` +
+        `🍽️ *Order Items:*%0A${itemsText}%0A` +
+        `--------------------------------%0A` +
+        `💰 *Total Payable:* ₹${finalPayable} (Order #${ordersDone})%0A` +
+        `🔗 *Referral Code:* ${refBy}%0A` +
+        `🎁 *Partner Spa/Haircut Voucher:* ${voucher || 'None'}%0A` +
+        `🔒 *Note:* Location permission active only until food is delivered.`;
+
+      cart = [];
+      updateCartUI();
+      renderPartnerOffers();
+      closeModal('checkoutModal');
+      window.open(`https://wa.me/?text=${waMessage}`, '_blank');
+    }
+
+    // 6. MODAL HELPERS & FLOATING PWA WEB APP INSTALLER
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+    });
+
+    function triggerInstallApp() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+      } else {
+        alert('📲 App Install करने के लिए: अपने ब्राउज़र के ऊपर कोने में 3 डॉट्स (⋮) पर क्लिक करें और "Add to Home Screen / Install App" चुनें!');
+      }
+    }
+  </script>
+</body>
+</html>
+  </script>
+
+  <!-- PART 13: ADDICTIVE NEUROMARKETING & GAMIFICATION STYLES -->
+  <style>
+    .fomo-urgency-bar {
+      background: linear-gradient(90deg, #1a1200, #d4af37, #1a1200);
+      color: #000; font-weight: 700; text-align: center;
+      padding: 6px 12px; font-size: 0.8rem; letter-spacing: 0.5px;
+      position: relative; z-index: 1001;
+    }
+    .spin-trigger-btn {
+      position: fixed; bottom: 75px; left: 20px; z-index: 1500;
+      background: radial-gradient(circle, #f3e5ab, #d4af37, #b87333);
+      color: #000; font-weight: 800; padding: 10px 16px;
+      border-radius: 30px; border: 2px solid #fff; cursor: pointer;
+      box-shadow: 0 0 20px rgba(212,175,55,0.8); font-size: 0.82rem;
+      animation: pulseGold 2s infinite;
+    }
+    @keyframes pulseGold {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.07); }
+      100% { transform: scale(1); }
+    }
+    .live-toast {
+      position: fixed; bottom: 135px; left: 20px; z-index: 1600;
+      background: rgba(20, 20, 20, 0.96); border: 1px solid var(--gold-primary);
+      border-left: 4px solid #2ecc71; color: #fff; padding: 10px 14px;
+      border-radius: 10px; font-size: 0.78rem; max-width: 290px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.85); display: none;
+      animation: slideInToast 0.4s ease;
+    }
+    @keyframes slideInToast {
+      from { transform: translateX(-110%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .wheel-circle {
+      width: 220px; height: 220px; border-radius: 50%; margin: 15px auto;
+      border: 6px solid var(--gold-primary);
+      background: conic-gradient(
+        #1f1f1f 0deg 60deg, #b87333 60deg 120deg,
+        #141414 120deg 180deg, #d4af37 180deg 240deg,
+        #1f1f1f 240deg 300deg, #8a5a2b 300deg 360deg
+      );
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 3.5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+      box-shadow: 0 0 30px rgba(212,175,55,0.4);
+    }
+    .wheel-center {
+      width: 70px; height: 70px; border-radius: 50%; background: #0a0a0a;
+      border: 3px solid var(--gold-light); color: var(--gold-primary);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.75rem; text-align: center;
+    }
+    .upsell-bar-wrap {
+      background: #141414; border: 1px dashed var(--gold-primary);
+      padding: 8px 10px; border-radius: 8px; margin-bottom: 12px; font-size: 0.8rem;
+    }
+    .upsell-progress-bg {
+      width: 100%; height: 7px; background: #2a2a2a; border-radius: 10px; margin-top: 5px; overflow: hidden;
+    }
+    .upsell-progress-fill {
+      height: 100%; background: linear-gradient(90deg, var(--gold-primary), #2ecc71); width: 0%; transition: 0.4s;
+    }
+  </style>
+
+  <!-- Floating Spin & Win Button -->
+  <button class="spin-trigger-btn" onclick="openModal('spinWheelModal')">
+    🎡 Spin & Win Free Food!
+  </button>
+
+  <!-- Live Social Proof Toast Notification -->
+  <div class="live-toast" id="liveSocialToast"></div>
+    <!-- PART 14: ROYAL SPIN WHEEL MODAL -->
+  <div class="modal-overlay" id="spinWheelModal">
+    <div class="modal-box" style="text-align:center;">
+      <button class="close-btn" onclick="closeModal('spinWheelModal')">&times;</button>
+      <span class="offer-badge">🎰 DAILY ROYAL JACKPOT</span>
+      <h3 style="color:var(--gold-primary); margin-top:6px;">Spin the Crafted Wheel!</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted);">अपनी किस्मत आज़माएं—हर स्पिन पर Free Dish, Extra Discount या Spa Points पक्के!</p>
+
+      <div style="font-size:1.3rem; color:var(--gold-primary); margin-top:8px;">▼</div>
+      <div class="wheel-circle" id="royalWheelElement">
+        <div class="wheel-center">CRAFTED<br>VIP</div>
+      </div>
+
+      <div id="spinResultText" style="min-height:24px; color:#2ecc71; font-weight:600; font-size:0.9rem; margin-bottom:10px;"></div>
+
+      <button class="btn-gold" id="spinActionBtn" style="width:100%; padding:12px; font-size:0.95rem;" onclick="spinRoyalWheel()">
+        🎡 SPIN NOW (1 Free Spin Daily)
+      </button>
+    </div>
+  </div>
+    <!-- PART 15-A: ADMIN SPIN PRIZES SETUP & CONTROLLER -->
+  <script>
+    const defaultSpinPrizes = [
+      { id: 'sp_1', label: '🌶️ FREE Extra Street Garlic-Tomato Chutney', type: 'FREE_ITEM', value: 0, minOrder: 149 },
+      { id: 'sp_2', label: '💇‍♂️ +1 Bonus Order Point (For Free Haircut/Spa)', type: 'BONUS_ORDER', value: 1, minOrder: 149 },
+      { id: 'sp_3', label: '💸 Flat ₹30 Real Cash Off', type: 'CASH_OFF', value: 30, minOrder: 299 },
+      { id: 'sp_4', label: '🍫 FREE Mini Choco Lava Cup', type: 'FREE_ITEM', value: 0, minOrder: 399 }
+    ];
+
+    let spinPrizes = JSON.parse(localStorage.getItem('tcp_spin_prizes') || JSON.stringify(defaultSpinPrizes));
+
+    const fakeLiveOrders = [
+      '🔥 अंकेश ने अभी DLF Gate से *Pressure Cooker Veg Biryani* ऑर्डर की!',
+      '✨ रिया शर्मा ने अभी 10 ऑर्डर पूरे करके *Free Haircut Voucher* अनलॉक किया!',
+      '🍽️ राहुल ने अभी *Creamy White Sauce Pasta* पर 15% फ्लैश डील क्लेम की!',
+      '🎡 कबीर ने अभी स्पिन व्हील में *FREE Garlic-Tomato Chutney* जीती!',
+      '⚡ विक्रम ने अभी *Charcoal Roasted Burger* + *Grilled Sandwich* मंगाया!'
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      injectUrgencyTopBar();
+      startLiveFomoNotifications();
+      renderAdminSpinPrizes();
+      hookRealSpinIntoCheckoutAndWhatsApp();
+      checkAutoSpinPrompt();
+    });
+
+    function renderAdminSpinPrizes() {
+      const listEl = document.getElementById('adminSpinPrizesList');
+      if (!listEl) return;
+      listEl.innerHTML = spinPrizes.map((p, idx) => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #333;">
+          <span><strong>${p.label}</strong> (Min: ₹${p.minOrder})</span>
+          <button onclick="deleteSpinPrize(${idx})" style="color:#e74c3c; background:none; border:none; cursor:pointer;">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    function addCustomSpinPrize() {
+      const label = document.getElementById('adminSpinLabel').value.trim();
+      const type = document.getElementById('adminSpinType').value;
+      const value = parseInt(document.getElementById('adminSpinValue').value || '0', 10);
+      const minOrder = parseInt(document.getElementById('adminSpinMinOrder').value || '0', 10);
+
+      if (!label) { alert('कृपया स्पिन इनाम का नाम लिखें!'); return; }
+      spinPrizes.push({ id: 'sp_' + Date.now(), label, type, value, minOrder });
+      localStorage.setItem('tcp_spin_prizes', JSON.stringify(spinPrizes));
+      renderAdminSpinPrizes();
+      document.getElementById('adminSpinLabel').value = '';
+      alert('✅ नया स्पिन व्हील इनाम जुड़ गया!');
+    }
+
+    function deleteSpinPrize(idx) {
+      if (spinPrizes.length <= 1) { alert('कम से कम 1 इनाम व्हील में रहना ज़रूरी है!'); return; }
+      spinPrizes.splice(idx, 1);
+      localStorage.setItem('tcp_spin_prizes', JSON.stringify(spinPrizes));
+      renderAdminSpinPrizes();
+    }
+          // PART 15-B: REAL SPIN WHEEL EXECUTION & CHECKOUT HOOK
+    function spinRoyalWheel() {
+      const todayKey = new Date().toDateString();
+      if (localStorage.getItem('tcp_last_spin_date') === todayKey) {
+        alert('आप आज का स्पिन कर चुके हैं! आपका जीता हुआ इनाम आपके ऑर्डर के साथ जुड़ चुका है।');
+        return;
+      }
+      if (spinPrizes.length === 0) { alert('अभी कोई स्पिन ऑफर एक्टिव नहीं है।'); return; }
+
+      const wheel = document.getElementById('royalWheelElement');
+      const btn = document.getElementById('spinActionBtn');
+      btn.disabled = true;
+
+      const wonPrize = spinPrizes[Math.floor(Math.random() * spinPrizes.length)];
+      const deg = 1440 + Math.floor(Math.random() * 360);
+      wheel.style.transform = `rotate(${deg}deg)`;
+
+      setTimeout(() => {
+        localStorage.setItem('tcp_last_spin_date', todayKey);
+        localStorage.setItem('tcp_won_spin_reward', JSON.stringify(wonPrize));
+
+        if (wonPrize.type === 'BONUS_ORDER' && wonPrize.value > 0) {
+          const cur = parseInt(localStorage.getItem('tcp_completed_orders_count') || '0', 10) + wonPrize.value;
+          localStorage.setItem('tcp_completed_orders_count', cur.toString());
+          renderPartnerOffers();
         }
 
-        function logoutRole() { currentRole = 'public'; activeMemberData = null; customBargainPrice = null; updateRoleNavigation(); openPanel('customer-panel'); }
-                    function renderCategories() {
-            const cats = ["All", ...new Set(menuItems.map(i => i.cat))];
-            const tabContainer = document.getElementById('category-tabs');
-            tabContainer.innerHTML = '';
-            cats.forEach(c => {
-                const btn = document.createElement('button');
-                btn.className = `cat-pill ${selectedCategory === c ? 'active' : ''}`;
-                btn.innerText = c; btn.onclick = () => { selectedCategory = c; renderCategories(); renderMenu(); };
-                tabContainer.appendChild(btn);
-            });
+        document.getElementById('spinResultText').innerHTML =
+          `🎉 बधाई हो! आपने सच में जीता है:<br><strong style="color:var(--gold-primary);">${wonPrize.label}</strong><br><span style="font-size:0.75rem; color:#ccc;">(₹${wonPrize.minOrder}+ के ऑर्डर पर आपके पार्सल के साथ मिलेगा)</span>`;
+        btn.innerText = '✅ Real Reward Added to Your Order!';
+      }, 3600);
+    }
+
+    function checkAutoSpinPrompt() {
+      const todayKey = new Date().toDateString();
+      if (localStorage.getItem('tcp_last_spin_date') !== todayKey) {
+        setTimeout(() => { openModal('spinWheelModal'); }, 7000);
+      }
+    }
+
+    function hookRealSpinIntoCheckoutAndWhatsApp() {
+      const origCheckout = window.openCheckoutModal;
+      window.openCheckoutModal = function() {
+        origCheckout();
+        const subTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        const won = JSON.parse(localStorage.getItem('tcp_won_spin_reward') || 'null');
+        const billBox = document.getElementById('billSummaryBox');
+
+        if (won && billBox) {
+          if (subTotal >= won.minOrder) {
+            billBox.innerHTML += `<div style="margin-top:6px; padding:6px; background:rgba(46,204,113,0.15); border:1px solid #2ecc71; border-radius:6px; color:#2ecc71;">
+              🎡 <strong>Real Spin Prize Unlocked:</strong> ${won.label} ${won.type === 'CASH_OFF' ? `(-₹${won.value} Extra Off)` : '(Included Free with Order!)'}
+            </div>`;
+          } else {
+            billBox.innerHTML += `<div style="margin-top:6px; padding:6px; background:rgba(212,175,55,0.12); border:1px dashed var(--gold-primary); border-radius:6px; color:var(--gold-light); font-size:0.78rem;">
+              🎡 आपका जीता हुआ इनाम <strong>(${won.label})</strong> पाने के लिए सिर्फ <strong>₹${won.minOrder - subTotal}</strong> का और आइटम जोड़ें!
+            </div>`;
+          }
+        }
+      };
+              // PART 15-C: WHATSAPP REAL PRIZE SYNC & FOMO ENGINE
+      window.submitFinalOrder = function() {
+        const name = document.getElementById('custName').value.trim();
+        const phone = document.getElementById('custPhone').value.trim();
+        const addr = document.getElementById('custAddress').value.trim();
+        const gps = document.getElementById('custGpsLink').value.trim();
+        const voucher = document.getElementById('selectedPartnerVoucher').value;
+
+        if (!name || phone.length < 10 || !addr) {
+          alert('कृपया अपना नाम, 10-अंकों का मोबाइल नंबर और पता ज़रूर भरें!');
+          return;
+        }
+        if (!gps || !gps.includes('google.com/maps')) {
+          alert('कृपया "Detect My Location (GPS)" बटन दबाकर अपनी Google Maps लोकेशन परमिशन Allow करें!');
+          return;
         }
 
-        function renderMenu() {
-            renderCategories();
-            const grid = document.getElementById('menu-grid');
-            grid.innerHTML = '';
-            const filtered = selectedCategory === "All" ? menuItems : menuItems.filter(i => i.cat === selectedCategory);
-            filtered.forEach(item => {
-                let badgeClass = item.type === 'Non-Veg' ? 'badge-nonveg' : (item.type === 'Egg' ? 'badge-egg' : 'badge-veg');
-                grid.innerHTML += `
-                    <div class="menu-card">
-                        <div>
-                            <div style="display:flex; justify-content:space-between;"><span class="badge ${badgeClass}">${item.type}</span><span style="font-size:11px; color:var(--text-muted);">${item.cat}</span></div>
-                            <h3>${item.name}</h3><p>${item.desc || ''}</p>
-                        </div>
-                        <div class="price-row">
-                            <div><span class="price-tag">₹${item.price}</span><span class="member-price-tag">👑 Member: ₹${Math.round(item.price * 0.85)}</span></div>
-                            <button class="btn btn-sm" onclick="addItemToCart(${item.id})">+ Add</button>
-                        </div>
-                    </div>`;
-            });
+        localStorage.setItem('tcp_cust_name', name);
+        localStorage.setItem('tcp_cust_phone', phone);
+        localStorage.setItem('tcp_cust_addr', addr);
+
+        const ordersDone = parseInt(localStorage.getItem('tcp_completed_orders_count') || '0', 10) + 1;
+        localStorage.setItem('tcp_completed_orders_count', ordersDone.toString());
+
+        const subTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        const rate = ordersDone === 1 ? 0.25 : ordersDone === 2 ? 0.15 : ordersDone === 3 ? 0.10 : 0;
+        let finalPayable = subTotal - Math.round(subTotal * rate);
+
+        const won = JSON.parse(localStorage.getItem('tcp_won_spin_reward') || 'null');
+        let spinPrizeStatus = 'None';
+        if (won && subTotal >= won.minOrder) {
+          spinPrizeStatus = won.label;
+          if (won.type === 'CASH_OFF') {
+            finalPayable = Math.max(0, finalPayable - won.value);
+          }
+          localStorage.removeItem('tcp_won_spin_reward');
         }
 
-        function addItemToCart(id) {
-            const dish = menuItems.find(m => m.id === id);
-            const existing = cart.find(c => c.id === id);
-            if (existing) existing.qty += 1; else cart.push({ ...dish, qty: 1 });
-            customBargainPrice = null; renderCart();
-        }
+        const refBy = localStorage.getItem('tcp_referred_by') || 'Direct';
+        const itemsText = cart.map(i => `• ${i.name} x${i.qty} = ₹${i.price * i.qty}`).join('%0A');
 
-        function changeQty(id, delta) {
-            const idx = cart.findIndex(c => c.id === id);
-            if (idx > -1) { cart[idx].qty += delta; if (cart[idx].qty <= 0) cart.splice(idx, 1); }
-            customBargainPrice = null; renderCart();
-        }
+        const waMessage = `*👑 NEW ORDER - THE CRAFTED PLATE*%0A` +
+          `--------------------------------%0A` +
+          `👤 *Customer:* ${name}%0A` +
+          `📞 *Phone:* ${phone}%0A` +
+          `🏠 *Address:* ${addr}%0A` +
+          `📍 *Google Maps Live GPS:* ${gps}%0A` +
+          `--------------------------------%0A` +
+          `🍽️ *Order Items:*%0A${itemsText}%0A` +
+          `--------------------------------%0A` +
+          `💰 *Total Payable:* ₹${finalPayable} (Order #${ordersDone})%0A` +
+          `🎡 *REAL SPIN WHEEL PRIZE WON:* ${spinPrizeStatus}%0A` +
+          `🎁 *Partner Spa/Haircut Voucher:* ${voucher || 'None'}%0A` +
+          `🔗 *Referral Code:* ${refBy}%0A` +
+          `🔒 *Note:* Location permission active only until food is delivered.`;
 
-        function clearCart() { cart = []; customBargainPrice = null; renderCart(); }
+        cart = [];
+        updateCartUI();
+        renderPartnerOffers();
+        closeModal('checkoutModal');
+        window.open(`https://wa.me/?text=${waMessage}`, '_blank');
+      };
+    }
 
-        function getCartTotals() {
-            const menuTotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-            const isVip = (currentRole === 'member' || currentRole === 'admin');
-            const memberSave = isVip ? Math.round(menuTotal * 0.15) : 0;
-            const afterMember = menuTotal - memberSave;
-            const finalPayable = customBargainPrice !== null ? customBargainPrice : afterMember;
-            return { menuTotal, isVip, memberSave, afterMember, finalPayable };
-        }
+    function injectUrgencyTopBar() {
+      const bar = document.createElement('div');
+      bar.className = 'fomo-urgency-bar';
+      bar.innerHTML = `⏳ VIP HAPPY HOUR: अगले <span id="vipTimerClock">14:59</span> में ऑर्डर करने पर पाएँ स्पिन व्हील का रियल इनाम + फास्ट डिलीवरी!`;
+      document.body.insertBefore(bar, document.body.firstChild);
+      let totalSec = 899;
+      setInterval(() => {
+        totalSec = totalSec > 0 ? totalSec - 1 : 899;
+        const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+        const s = String(totalSec % 60).padStart(2, '0');
+        const el = document.getElementById('vipTimerClock');
+        if (el) el.innerText = `${m}:${s}`;
+      }, 1000);
+    }
 
-        function renderCart() {
-            document.getElementById('cart-count-top').innerText = cart.reduce((s, i) => s + i.qty, 0);
-            const list = document.getElementById('cart-list'), summary = document.getElementById('cart-pricing-summary');
-            if (cart.length === 0) { list.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Cart is empty.</p>`; summary.style.display = 'none'; return; }
-            summary.style.display = 'block'; list.innerHTML = '';
-            cart.forEach(item => {
-                list.innerHTML += `<div class="cart-row"><div><b>${item.name}</b><div style="font-size:12px; color:var(--text-muted);">₹${item.price} × ${item.qty}</div></div><div style="display:flex; align-items:center; gap:8px;"><button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button><b>${item.qty}</b><button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button></div></div>`;
-            });
-            const totals = getCartTotals();
-            document.getElementById('bill-menu-total').innerText = `₹${totals.menuTotal}`;
-            document.getElementById('bill-member-row').style.display = totals.isVip ? 'flex' : 'none';
-            document.getElementById('bill-member-save').innerText = `-₹${totals.memberSave}`;
-            document.getElementById('bill-bargain-row').style.display = customBargainPrice !== null ? 'flex' : 'none';
-            if (customBargainPrice !== null) document.getElementById('bill-bargain-val').innerText = `₹${customBargainPrice}`;
-            document.getElementById('bill-final-payable').innerText = `₹${totals.finalPayable}`;
-        }
-
-        function submitBargainOffer() {
-            const val = parseInt(document.getElementById('custom-offer-input').value);
-            const feedback = document.getElementById('bargain-feedback'), totals = getCartTotals();
-            if (isNaN(val) || val <= 0 || val >= totals.afterMember) { alert("Enter valid offer!"); return; }
-            const publicMinAllowed = Math.round(totals.menuTotal * 0.90);
-            if (!totals.isVip && val < publicMinAllowed) { alert("Get Privilege Membership for deep bargaining!"); openPanel('membership-panel'); return; }
-            customBargainPrice = val;
-            feedback.style.color = "var(--green)";
-            feedback.innerHTML = `✔ Offer ₹${val} applied!`;
-            renderCart();
-        }
-
-        function toggleOrderPaymentQR() {
-            const mode = document.getElementById('cust-pay-mode').value;
-            document.getElementById('checkout-qr-container').style.display = mode.includes('Online') ? 'block' : 'none';
-        }
-
-        function copyUPI() { navigator.clipboard.writeText("8269083404-2@ybl"); alert("UPI copied!"); }
-
-        function placeCustomerOrder() {
-            const name = document.getElementById('cust-name').value.trim();
-            const phone = document.getElementById('cust-phone').value.trim();
-            const address = document.getElementById('cust-address').value.trim();
-            const payMode = document.getElementById('cust-pay-mode').value;
-            const utr = document.getElementById('order-utr-input').value.trim();
-            if (!name || !phone || !address) { alert("Fill required details!"); return; }
-
-            const totals = getCartTotals();
-            const newOrder = {
-                id: "ORD-" + Math.floor(1000 + Math.random() * 9000),
-                date: new Date().toLocaleDateString(),
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                customerName: name, customerPhone: phone, address: address,
-                itemsText: cart.map(i => `${i.name} (x${i.qty})`).join(", "),
-                menuTotal: totals.menuTotal, finalPrice: totals.finalPayable,
-                payMode: payMode + (utr ? ` [UTR: ${utr}]` : ''), statusStep: 1
-            };
-
-            ordersList.unshift(newOrder); saveAllData();
-            pushToGoogleSheet({ action: "saveOrder", data: newOrder });
-            renderLiveTracker(); renderDeliveryDashboard(); renderAdminDashboard();
-            const waMsg = `*NEW ORDER:* ${newOrder.id}%0A*Name:* ${name}%0A*Items:* ${newOrder.itemsText}%0A*Total:* ₹${newOrder.finalPrice}`;
-            clearCart(); document.getElementById('live-tracker-box').scrollIntoView({ behavior: 'smooth' });
-            window.open(`https://wa.me/91${ownerWhatsApp}?text=${waMsg}`, '_blank');
-            }
-                    function renderLiveTracker() {
-            const noMsg = document.getElementById('no-active-order-msg'), content = document.getElementById('active-order-tracker-content');
-            if (ordersList.length === 0) { noMsg.style.display = 'block'; content.style.display = 'none'; return; }
-            const latest = ordersList[0];
-            noMsg.style.display = 'none'; content.style.display = 'block';
-            document.getElementById('live-order-id-badge').innerText = `${latest.id}`;
-            document.getElementById('tracker-items-summary').innerText = `Items: ${latest.itemsText}`;
-            document.getElementById('tracker-price-summary').innerText = `Payable: ₹${latest.finalPrice}`;
-            for (let s = 1; s <= 4; s++) {
-                const el = document.getElementById(`t-step-${s}`);
-                el.classList.remove('active', 'done');
-                if (s < latest.statusStep) el.classList.add('done');
-                else if (s === Number(latest.statusStep)) el.classList.add('active');
-            }
-        }
-
-        function handleOrderModificationRequest() { window.open(`https://wa.me/91${ownerWhatsApp}?text=Modify%20Order`, '_blank'); }
-        function callKitchenToNegotiateReadyOrder() { window.location.href = `tel:${ownerWhatsApp}`; }
-
-        function populateDigitalCard(memberObj) {
-            document.getElementById('card-holder-name').innerText = String(memberObj.name).toUpperCase();
-            document.getElementById('card-holder-id').innerText = memberObj.id;
-            document.getElementById('card-valid-date').innerText = memberObj.valid || "11/2027";
-            document.getElementById('card-status-text').innerText = "ACTIVE ✔";
-        }
-
-        function autoGenerateMembership() {
-            const name = document.getElementById('mem-buy-name').value.trim();
-            const phone = document.getElementById('mem-buy-phone').value.trim();
-            const utr = document.getElementById('mem-buy-utr').value.trim();
-            if (!name || !phone || utr.length < 4) { alert("Fill all membership fields!"); return; }
-            const newMem = { id: "TCP" + Math.floor(100000 + Math.random() * 900000), date: new Date().toLocaleDateString(), name, phone, utr, valid: "11/2027 (1 Year)" };
-            membersList.push(newMem); saveAllData();
-            pushToGoogleSheet({ action: "saveMember", data: newMem });
-            currentRole = 'member'; activeMemberData = newMem;
-            populateDigitalCard(newMem); updateRoleNavigation();
-            alert(`Membership Activated! ID: ${newMem.id}`);
-        }
-
-        function saveDeliveryPartnerConfig() {
-            deliveryPartner.name = document.getElementById('deliv-boy-name-input').value.trim() || deliveryPartner.name;
-            saveAllData(); renderLiveTracker(); alert("Updated!");
-        }
-
-        function updateOrderStep(orderId, newStep) {
-            const ord = ordersList.find(o => o.id === orderId);
-            if (ord) { ord.statusStep = newStep; saveAllData(); pushToGoogleSheet({ action: "updateOrderStatus", id: orderId, statusStep: newStep }); renderLiveTracker(); renderDeliveryDashboard(); renderAdminDashboard(); }
-        }
-
-        function renderDeliveryDashboard() {
-            document.getElementById('deliv-boy-name-input').value = deliveryPartner.name;
-            const box = document.getElementById('delivery-orders-container');
-            if (ordersList.length === 0) { box.innerHTML = `<p>No orders.</p>`; return; }
-            box.innerHTML = '';
-            ordersList.forEach(o => {
-                box.innerHTML += `<div class="order-card"><b>${o.id} • ${o.customerName}</b><br>📍 ${o.address}<br>💰 ₹${o.finalPrice}<br><button class="btn btn-sm btn-green" onclick="updateOrderStep('${o.id}', 4)">Delivered</button></div>`;
-            });
-        }
-
-        function adminAddDish() {
-            const name = document.getElementById('adm-dish-name').value.trim();
-            const price = parseInt(document.getElementById('adm-dish-price').value);
-            const cat = document.getElementById('adm-dish-cat').value;
-            const type = document.getElementById('adm-dish-type').value;
-            if (!name || isNaN(price)) { alert("Enter Name & Price!"); return; }
-            menuItems.push({ id: menuItems.length + 1, name, price, cat, type });
-            saveAllData(); pushToGoogleSheet({ action: "saveMenu", menu: menuItems });
-            renderMenu(); renderAdminDashboard(); alert("Dish Added!");
-        }
-
-        function adminDeleteDish(id) {
-            menuItems = menuItems.filter(m => m.id !== id);
-            saveAllData(); pushToGoogleSheet({ action: "saveMenu", menu: menuItems });
-            renderMenu(); renderAdminDashboard();
-        }
-
-        function saveAdminWhatsApp() {
-            ownerWhatsApp = document.getElementById('adm-whatsapp-num').value.trim() || ownerWhatsApp;
-            document.getElementById('header-helpline').innerText = ownerWhatsApp;
-            saveAllData(); alert("Saved!");
-        }
-
-        function saveGoogleSheetURL() {
-            googleSheetURL = document.getElementById('google-sheet-url-input').value.trim();
-            saveAllData(); syncFromGoogleSheet(); alert("Sheet Connected!");
-        }
-
-        function renderAdminDashboard() {
-            document.getElementById('google-sheet-url-input').value = googleSheetURL;
-            const menuBox = document.getElementById('admin-menu-manage-list');
-            menuBox.innerHTML = '';
-            menuItems.forEach(item => {
-                menuBox.innerHTML += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #333; font-size:12px;"><span>${item.name} (₹${item.price})</span><button class="btn btn-red btn-sm" onclick="adminDeleteDish(${item.id})">Del</button></div>`;
-            });
-            const ordBox = document.getElementById('admin-orders-list');
-            ordBox.innerHTML = ordersList.length === 0 ? "No orders." : ordersList.map(o => `<div class="order-card"><b>${o.id}</b> - ${o.customerName} (₹${o.finalPrice})</div>`).join('');
-        }
-
-        window.onload = function() {
-            document.getElementById('header-helpline').innerText = ownerWhatsApp;
-            updateRoleNavigation(); renderLiveTracker();
-            if (googleSheetURL) syncFromGoogleSheet();
-        };
-    </script>
+    function startLiveFomoNotifications() {
+      const toast = document.getElementById('liveSocialToast');
+      setInterval(() => {
+        const msg = fakeLiveOrders[Math.floor(Math.random() * fakeLiveOrders.length)];
+        toast.innerHTML = `${msg} <div style="font-size:0.68rem; color:var(--gold-primary); margin-top:3px;">⚡ Verified Live Activity • Just Now</div>`;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 4500);
+      }, 13000);
+    }
+  </script>
 </body>
 </html>
